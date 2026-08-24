@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Academia Agile</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:auto;overflow-anchor:none}
+:root{
+  --bg:#0b0e14;--surface:#141925;--s2:#1b2130;--s3:#252d3d;
+  --border:rgba(255,255,255,.08);--border2:rgba(255,255,255,.15);
+  --text:#eef1f7;--muted:#8f98ad;
+  --accent:#5b82ff;--green:#23d56e;--red:#ff6e7b;
+  --amber:#f6c343;--violet:#a77bff;--r:12px;--rl:18px;
+  --font:Inter,system-ui,sans-serif;--mono:"JetBrains Mono",monospace;
+}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);overflow-x:hidden}
+button,a{font:inherit}
+.top{position:sticky;top:0;z-index:50;background:rgba(11,14,20,.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.toprow{display:flex;align-items:center;gap:12px;padding:12px 16px}
+.logo{width:36px;height:36px;display:grid;place-items:center;border:1px solid var(--accent);background:rgba(91,130,255,.12);border-radius:10px;font-size:18px;flex-shrink:0}
+.brand b{display:block;font-size:13px;line-height:1.2}
+.brand span{display:block;color:var(--muted);font-size:10px;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
+.xp{margin-left:auto;padding:6px 11px;border:1px solid var(--accent);border-radius:999px;color:var(--accent);font-family:var(--mono);font-size:11px;font-weight:700;white-space:nowrap}
+.nav{display:flex;gap:5px;padding:0 12px 9px}
+.nav button{flex:1;border:1px solid var(--border);background:var(--s2);color:var(--muted);border-radius:9px;padding:8px 4px;cursor:pointer;font-size:11px;transition:all .15s}
+.nav button.active{color:#fff;border-color:var(--accent);background:rgba(91,130,255,.12)}
+.progress{background:var(--surface);padding:9px 16px 8px;border-bottom:1px solid var(--border)}
+.levels{display:flex;justify-content:space-between;gap:3px;margin-bottom:6px}
+.lev{flex:1;text-align:center;color:var(--muted);font-size:9px;line-height:1.3;transition:color .3s}
+.lev span{display:block;font-size:13px;margin-bottom:1px}
+.lev.active{color:#fff;font-weight:700}
+.track{height:6px;background:var(--s3);border-radius:99px;overflow:hidden}
+.fill{height:100%;width:5%;background:var(--accent);transition:.4s ease}
+.badge{display:inline-block;margin-top:6px;padding:4px 9px;border-radius:999px;font-size:10px;background:rgba(91,130,255,.12);color:var(--accent);border:1px solid rgba(91,130,255,.35)}
+.main{max-width:860px;margin:0 auto;padding:14px 13px 80px}
+.screen{display:none}
+.screen.active{display:block}
+.hero{background:linear-gradient(135deg,rgba(91,130,255,.14),rgba(167,123,255,.08));border:1px solid var(--border2);border-radius:20px;padding:18px;margin-bottom:12px}
+.hero h1{margin:0 0 5px;font-size:21px;line-height:1.25}
+.hero p{margin:0;color:var(--muted);font-size:12px;line-height:1.6}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:14px}
+.card h3,.card h4{margin:0 0 6px;font-size:14px}
+.btn{border:0;background:var(--accent);color:#fff;border-radius:10px;padding:10px 13px;font-weight:700;cursor:pointer;font-size:13px;transition:opacity .15s}
+.btn:hover{opacity:.88}
+.btn.secondary{background:var(--s2);border:1px solid var(--border2);color:var(--text)}
+.btn.ghost{background:transparent;border:1px solid var(--border2);color:var(--text)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:11px;text-align:center}
+.stat b{font:700 18px var(--mono);display:block}
+.stat span{display:block;color:var(--muted);font-size:10px;margin-top:2px}
+.section-title{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 8px}
+.skill{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.skill:last-child{border-bottom:0}
+.skill-name{width:145px;font-size:12px;flex-shrink:0}
+.bar{flex:1;height:5px;background:var(--s3);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent)}
+.pct{width:38px;text-align:right;font:11px var(--mono);color:var(--muted)}
+.qtop{display:flex;align-items:center;gap:8px;margin-bottom:11px;flex-wrap:wrap}
+.qcount{margin-left:auto;font:11px var(--mono);color:var(--muted)}
+.tag{padding:3px 8px;border-radius:999px;font-size:10px;font-weight:700;border:1px solid var(--border2);color:var(--accent);background:rgba(91,130,255,.08)}
+.qcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:18px;margin-bottom:11px}
+.qtext{font-size:16px;font-weight:600;line-height:1.55;margin-bottom:14px}
+.opts{display:flex;flex-direction:column;gap:7px}
+.opt{width:100%;text-align:left;padding:12px 13px;border-radius:10px;background:var(--s2);border:1px solid var(--border2);color:var(--text);cursor:pointer;display:flex;gap:10px;align-items:flex-start;transition:all .12s;font-size:13px}
+.opt:hover:not(:disabled){border-color:var(--accent);transform:translateX(2px)}
+.opt:disabled{cursor:default}
+.letter{min-width:20px;height:20px;border-radius:5px;background:var(--s3);display:grid;place-items:center;font:10px var(--mono);flex:none}
+.opt.correct{background:rgba(35,213,110,.1);border-color:var(--green)}
+.opt.correct .letter{background:var(--green);color:#000}
+.opt.wrong{background:rgba(255,110,123,.1);border-color:var(--red)}
+.opt.wrong .letter{background:var(--red);color:#fff}
+.feedback{display:none}
+.feedback.show{display:block}
+.fb{border-radius:14px;padding:13px;margin:9px 0;border:1px solid var(--border2);background:var(--surface)}
+.fb.ok{border-color:rgba(35,213,110,.3)}
+.fb.err{border-color:rgba(255,110,123,.3)}
+.fb h4{margin:0 0 6px;font-size:13px}
+.material{display:flex;align-items:center;gap:10px;padding:10px 11px;background:rgba(91,130,255,.08);border:1px solid rgba(91,130,255,.25);border-radius:11px;text-decoration:none;color:var(--text);margin-top:9px}
+.material:hover{background:rgba(91,130,255,.15)}
+.play{width:36px;height:28px;border-radius:7px;background:rgba(91,130,255,.2);display:grid;place-items:center;flex-shrink:0;font-size:12px}
+.material small{display:block;color:var(--muted);margin-top:1px;font-size:10px}
+.next{width:100%;margin-top:8px}
+.study-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.study-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:13px}
+.study-card .meta{display:flex;gap:5px;flex-wrap:wrap;margin:7px 0}
+.chip{font-size:9px;padding:3px 7px;border-radius:999px;background:var(--s3);color:var(--muted)}
+.achievement{display:flex;gap:10px;align-items:center;padding:10px;border:1px solid var(--border);border-radius:11px;background:var(--surface)}
+.aicon{font-size:20px}
+.timeline{display:flex;flex-direction:column;gap:7px}
+.row{display:flex;justify-content:space-between;gap:12px;padding:9px;border-bottom:1px solid var(--border);font-size:11px}
+.exam-box{border:1px solid rgba(246,195,67,.3);background:rgba(246,195,67,.06);border-radius:13px;padding:12px;margin-bottom:11px}
+.promo{padding:16px;border-radius:15px;text-align:center;background:linear-gradient(135deg,rgba(35,213,110,.13),rgba(91,130,255,.1));border:1px solid rgba(35,213,110,.25)}
+.muted{color:var(--muted)}
+.small{font-size:11px}
+.mission{border-left:3px solid var(--accent)}
+.action-grid{display:grid;grid-template-columns:1fr;gap:8px;margin-top:12px}
+.action-btn{display:flex;align-items:center;gap:10px;padding:13px 16px;border-radius:13px;border:1px solid var(--border2);background:var(--s2);color:var(--text);cursor:pointer;font-size:14px;font-weight:500;transition:all .15s;text-align:left;width:100%}
+.action-btn:hover{background:var(--s3);transform:translateX(2px)}
+.action-btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.action-btn.primary:hover{opacity:.9;transform:translateX(2px)}
+.action-btn .aicon{font-size:20px;flex-shrink:0;width:36px;height:36px;border-radius:9px;background:rgba(255,255,255,.1);display:grid;place-items:center}
+.action-btn.primary .aicon{background:rgba(255,255,255,.2)}
+.action-btn .alabel{flex:1}
+.action-btn .alabel b{display:block;font-size:14px;line-height:1.2}
+.action-btn .alabel span{display:block;font-size:11px;opacity:.7;margin-top:2px}
+.action-btn .achev{color:rgba(255,255,255,.5);font-size:16px}
+.auth-strip{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:11px;background:rgba(91,130,255,.08);border:1px solid rgba(91,130,255,.2);margin-bottom:10px;cursor:pointer;transition:all .15s}
+.auth-strip:hover{background:rgba(91,130,255,.15)}
+.auth-strip .acloud{font-size:18px}
+.auth-strip .atext b{display:block;font-size:13px;color:var(--text)}
+.auth-strip .atext span{display:block;font-size:11px;color:var(--muted)}
+.auth-strip .achev{margin-left:auto;color:var(--muted);font-size:14px}
+
+.lock{opacity:.45}
+.empty{padding:20px;text-align:center;color:var(--muted);font-size:12px}
+.review-item{padding:11px 0;border-bottom:1px solid var(--border)}
+.review-item:last-child{border-bottom:0}
+.review-q{font-size:12px;font-weight:600;line-height:1.45}
+.review-line{font-size:11px;margin-top:3px}
+.wrongtxt{color:var(--red)}
+.righttxt{color:var(--green)}
+.toast{position:fixed;top:68px;right:13px;z-index:200;background:var(--green);color:#06150a;padding:7px 12px;border-radius:999px;font:700 12px var(--mono);transform:translateY(-5px);opacity:0;transition:.25s;pointer-events:none}
+.toast.show{opacity:1;transform:none}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:flex-end;z-index:100}
+.modal.show{display:flex}
+.modal-card{width:100%;max-width:860px;margin:0 auto;background:var(--surface);border:1px solid var(--border2);border-radius:20px 20px 0 0;padding:16px;max-height:88vh;overflow:auto}
+.x{float:right;border:0;background:transparent;color:var(--muted);font-size:22px;cursor:pointer}
+@media(max-width:640px){
+  .grid,.study-grid{grid-template-columns:1fr}
+  .stats{grid-template-columns:1fr 1fr}
+  .skill-name{width:110px}
+  .qtext{font-size:15px}
+  .nav button{font-size:10px;padding:7px 3px}
+  .brand span{max-width:160px}
+  .hero h1{font-size:18px}
+  .hero{padding:14px}
+  .main{padding:12px 11px 80px}
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+<div class="top" id="topBar">
+  <div class="toprow">
+    <div class="logo">&#127919;</div>
+    <div class="brand"><b>Academia Agile</b><span>Métricas · Scrum · Kanban · EBM · DORA · Coaching</span></div>
+    <div class="xp" id="xp">0 XP</div>
+  </div>
+  <div class="nav">
+    <button id="nav-home" class="active" onclick="showScreen('home')">&#127968; Jornada</button>
+    <button id="nav-study" onclick="showScreen('study')">&#128218; Estudos</button>
+    <button id="nav-profile" onclick="showScreen('profile')">&#128100; Perfil</button>
+  </div>
+  <div class="progress">
+    <div class="levels">
+      <div class="lev active" data-lv="1"><span>&#127807;</span>SM Jr</div>
+      <div class="lev" data-lv="2"><span>&#9881;&#65039;</span>SM Pleno</div>
+      <div class="lev" data-lv="3"><span>&#128293;</span>SM Sênior</div>
+      <div class="lev" data-lv="4"><span>&#129517;</span>Agile Coach</div>
+      <div class="lev" data-lv="5"><span>&#127942;</span>Especialista</div>
+    </div>
+    <div class="track"><div class="fill" id="levelFill"></div></div>
+    <div class="badge" id="levelBadge">&#127807; Scrum Master Júnior</div>
+  </div>
+</div>
+<div class="main">
+  <section class="screen active" id="home">
+    <div class="hero">
+      <h1 id="welcome">Sua jornada Agile</h1>
+      <p id="homeMsg">Aprenda, pratique, recupere seus erros e conquiste a próxima promoção.</p>
+      <div id="auth-strip-wrap"></div>
+      <div class="action-grid">
+        <button class="action-btn primary" onclick="startTraining()">
+          <div class="aicon">🎮</div>
+          <div class="alabel"><b>Continuar treinamento</b><span>Questões adaptativas ao seu nível</span></div>
+          <span class="achev">›</span>
+        </button>
+        <button class="action-btn" onclick="startExam()">
+          <div class="aicon">🧪</div>
+          <div class="alabel"><b>Avaliação de promoção</b><span>Teste se você merece subir de nível</span></div>
+          <span class="achev">›</span>
+        </button>
+        <button class="action-btn" onclick="startDaily()">
+          <div class="aicon">⚔️</div>
+          <div class="alabel"><b>Desafio do dia</b><span>5 perguntas difíceis · +150 XP</span></div>
+          <span class="achev">›</span>
+        </button>
+      </div>
+    </div>
+    <div class="stats" id="homeStats"></div>
+    <div class="grid" style="margin-top:10px">
+      <div class="card mission"><h3>&#127919; Próxima missão</h3><div id="missionText" class="muted small"></div>
+        <div class="actions"><button class="btn secondary" onclick="startRecommended()">Começar</button></div>
+      </div>
+      <div class="card"><h3>&#127885; Conquistas recentes</h3><div id="recentAchievements" class="timeline"></div></div>
+    </div>
+    <div class="section-title">Domínio por competência</div>
+    <div class="card" id="homeSkills"></div>
+  </section>
+  <section class="screen" id="study">
+    <div class="hero"><h1>&#128218; Central de Estudos</h1>
+      <p>Vídeos e perguntas organizados por conceito — nunca um vídeo aleatório. Cada material corresponde exatamente ao tópico.</p>
+    </div>
+    <div class="study-grid" id="studyGrid"></div>
+  </section>
+  <section class="screen" id="profile">
+    <div class="hero"><h1>&#128100; Seu perfil</h1><p>Histórico, evolução, domínio, conquistas e próximos passos.</p></div>
+    <div class="stats" id="profileStats"></div>
+    <div class="section-title">Evolução</div>
+    <div class="card" id="history"></div>
+    <div class="section-title">Conquistas</div>
+    <div class="grid" id="achievements"></div>
+    <div class="actions" style="margin-top:12px">
+      <button class="btn ghost" onclick="resetProgress()">&#8634; Zerar progresso</button>
+    </div>
+  </section>
+  <section class="screen" id="quiz">
+    <div id="examBanner"></div>
+    <div class="qtop">
+      <span class="tag" id="modeTag">&#127918; Treinamento</span>
+      <span class="tag" id="qdiff">Básico</span>
+      <span class="qcount" id="qcount">1/12</span>
+    </div>
+    <div class="qcard"><div class="qtext" id="qtext"></div><div class="opts" id="opts"></div></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="btn next" id="nextBtn" style="display:none" onclick="nextQuestion()">Próxima &#8594;</button>
+  </section>
+  <section class="screen" id="result"><div id="resultBody"></div></section>
+</div>
+<div class="modal" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-card"><button class="x" onclick="closeModal()">&#215;</button><div id="modalBody"></div></div>
+</div>
+<script>
+// ══ SUPABASE CONFIG — usando SDK oficial (resolve CORS) ══
+const SUPA_URL='https://zkavsisuylbafumxsgus.supabase.com';
+const SUPA_KEY='sb_publishable_JR3wXcyk6e029XUL18Q2AA_QOh7_qcf';
+
+// Aguarda o SDK carregar
+let _supa=null;
+function getClient(){
+ if(!_supa&&window.supabase){
+  _supa=window.supabase.createClient(SUPA_URL,SUPA_KEY,{
+   auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}
+  });
+ }
+ return _supa;
+}
+
+const sb={
+ client(){return getClient();},
+ async signUp(email,pass){return this.client().auth.signUp({email,password:pass});},
+ async signIn(email,pass){return this.client().auth.signInWithPassword({email,password:pass});},
+ async signOut(){return this.client().auth.signOut();},
+ async getSession(){return this.client().auth.getSession();},
+ async upsertProfile(data){return this.client().from('profiles').upsert(data,{onConflict:'user_id'});},
+ async upsertMastery(rows){return this.client().from('mastery').upsert(rows,{onConflict:'user_id,concept'});},
+ async insertSession(data){return this.client().from('sessions').insert(data);},
+ async getProfile(uid){const{data}=await this.client().from('profiles').select('*').eq('user_id',uid).single();return data||null;},
+ async getMastery(uid){const{data}=await this.client().from('mastery').select('*').eq('user_id',uid);return data||[];}
+};
+
+let currentUser=null;
+async function loadAuth(){
+ try{
+  const c=getClient();
+  if(!c)return;
+  const{data:{session}}=await c.auth.getSession();
+  if(session){currentUser=session.user;localStorage.setItem('supa_user',JSON.stringify(session.user));}
+ }catch(e){
+  // Fallback: tenta localStorage
+  try{const u=localStorage.getItem('supa_user');if(u)currentUser=JSON.parse(u);}catch(e2){}
+ }
+}
+// ══ BANCO DE QUESTÕES ══
+const BANK_RAW=[
+{diff:1,cat:"Flow Metrics",concept:"Lead Time",q:"O que mede o Lead Time em um sistema Kanban?",opts:["Tempo de trabalho ativo do time","Tempo total do pedido à entrega","Itens entregues por semana","Bugs em produção"],ans:1,xp:15,exp:"Lead Time começa quando o cliente solicita o item e termina quando é entregue. Inclui filas, espera e trabalho ativo. É a métrica que o cliente realmente sente.",vid:{t:"Lead Time vs Cycle Time in Kanban",u:"https://www.youtube.com/watch?v=xm7t7OJGps4"}},
+{diff:1,cat:"Flow Metrics",concept:"Cycle Time",q:"O que é Cycle Time?",opts:["Duração de uma sprint","Tempo em que o time trabalha ativamente no item até Done","Quantidade de ciclos por mês","Duração de uma cerimônia Scrum"],ans:1,xp:15,exp:"Cycle Time começa quando o time toca ativamente o item (In Progress) e termina em Done. É menor que o Lead Time, que inclui espera no backlog.",vid:{t:"Lead Time vs Cycle Time in Kanban",u:"https://www.youtube.com/watch?v=xm7t7OJGps4"}},
+{diff:1,cat:"Flow Metrics",concept:"WIP",q:"WIP (Work In Progress) representa o quê no board Kanban?",opts:["Itens concluídos na semana","Itens em andamento simultâneo no fluxo","Total do backlog","Membros ativos do time"],ans:1,xp:15,exp:"WIP é a quantidade de itens sendo trabalhados ao mesmo tempo. WIP alto = multitasking excessivo = lead time longo = baixa previsibilidade.",vid:{t:"Kanban e o Limite de WIP",u:"https://www.youtube.com/watch?v=tINK8GXgPIk"}},
+{diff:1,cat:"Flow Metrics",concept:"Throughput",q:"O que mede o Throughput de um time ágil?",opts:["Tempo de entrega por item","Quantidade de itens entregues por unidade de tempo","Eficiência do processo em %","Número de bloqueios"],ans:1,xp:15,exp:"Throughput = itens entregues / semana. É a taxa de saída real do sistema. Diferente de Velocity (story points subjetivos), Throughput conta apenas itens concluídos.",vid:{t:"WIP — Work in Progress, o que é?",u:"https://www.youtube.com/watch?v=OfrGQtFa3lU"}},
+{diff:1,cat:"Flow Metrics",concept:"Flow Efficiency",q:"O que é Flow Efficiency?",opts:["Eficiência de código em linhas/hora","% do Lead Time com trabalho ativo (vs. espera)","Features entregues por sprint","Taxa de aproveitamento de reuniões"],ans:1,xp:15,exp:"Flow Efficiency = Tempo ativo ÷ Lead Time total. Se um item leva 10 dias mas só 2 tiveram trabalho ativo, a FE é 20%. Média de mercado: 15-40%.",vid:{t:"Lead Time VS Cycle Time — DevOps and Kanban",u:"https://www.youtube.com/watch?v=fRqUhj3mj70"}},
+{diff:1,cat:"Scrum",concept:"Velocity",q:"O que é Velocity no Scrum?",opts:["Velocidade física do time","Soma de story points entregues por sprint","Número de deploys/semana","Tempo médio da daily"],ans:1,xp:15,exp:"Velocity é a soma de story points dos itens Done ao final de cada sprint. Serve para planejamento interno. Nunca deve ser usada para comparar times.",vid:{t:"Agile Story Points & Velocity Explained",u:"https://www.youtube.com/watch?v=Und8DgcUQf8"}},
+{diff:1,cat:"Scrum",concept:"Sprint Goal",q:"O que é Sprint Goal?",opts:["Número de story points planejados","Objetivo de negócio que a sprint deve atingir","Data de término da sprint","Lista de itens do Sprint Backlog"],ans:1,xp:15,exp:"Sprint Goal é o objetivo de negócio da sprint — a razão de existir daquele conjunto de trabalho. Um bom Sprint Goal orienta as decisões do time quando algo inesperado acontece.",vid:{t:"Sprint Goal — como escrever",u:"https://www.youtube.com/results?search_query=Sprint+Goal+Scrum+how+to+write"}},
+{diff:1,cat:"Scrum",concept:"Definition of Done",q:"O que é Definition of Done (DoD)?",opts:["Lista de tarefas de um item","Critérios que um item DEVE atender para ser considerado completo","Data de entrega da sprint","Número mínimo de testes"],ans:1,xp:15,exp:"DoD é um acordo formal sobre o que 'Done' significa para o time. Itens que não atendem à DoD não podem ser considerados prontos.",vid:{t:"Definition of Done — Scrum Guide",u:"https://www.youtube.com/results?search_query=Definition+of+Done+Scrum+Guide"}},
+{diff:1,cat:"Kanban",concept:"WIP limits",q:"O que é um WIP limit?",opts:["Número máximo de membros no time","Quantidade máxima de itens em andamento num estado","Prazo máximo de entrega","Limite de bugs por sprint"],ans:1,xp:15,exp:"WIP limit é o número máximo de itens permitidos em andamento num estado. Quando atingido, nenhum item novo pode entrar naquele estado até que um saia. Isso cria pull e expõe gargalos.",vid:{t:"Kanban e o Limite de WIP",u:"https://www.youtube.com/watch?v=tINK8GXgPIk"}},
+{diff:1,cat:"EBM",concept:"EBM - Current Value",q:"Quantos Key Value Areas (KVAs) o EBM possui?",opts:["2","3","4","5"],ans:2,xp:15,exp:"EBM tem 4 KVAs: Current Value (CV), Unrealized Value (UV), Time to Market (T2M) e Ability to Innovate (A2I). Cada um mede um ângulo diferente do valor entregue.",vid:{t:"EBM — Evidence-Based Management",u:"https://www.youtube.com/results?search_query=EBM+Evidence+Based+Management+Scrum"}},
+{diff:1,cat:"DORA",concept:"DORA - Deployment Frequency",q:"O que é MTTR no contexto DORA/SRE?",opts:["Minimum Time To Release","Mean Time To Restore — tempo médio para restaurar serviço após incidente","Maximum Throughput To Release","Monthly Time To Review"],ans:1,xp:15,exp:"MTTR (Mean Time to Restore) mede o tempo médio desde a detecção do incidente até a restauração completa do serviço. Times de elite DORA: MTTR < 1 hora.",vid:{t:"DORA Metrics Explained",u:"https://www.youtube.com/shorts/6UrG6FvtSik"}},
+{diff:1,cat:"Kanban",concept:"Políticas explícitas de priorização",q:"O que é uma política explícita no Kanban?",opts:["Regra secreta do gestor","Regras visíveis e acordadas pelo time sobre como o trabalho flui no board","Um SLA com o cliente","Uma política de RH"],ans:1,xp:15,exp:"Políticas explícitas são regras VISÍVEIS no board que governam como o trabalho entra, flui e sai. Ex: 'Só entram itens com critérios de aceite definidos'. Tornam o processo transparente.",vid:{t:"Kanban Explicit Policies",u:"https://www.youtube.com/results?search_query=Kanban+explicit+policies+prioritization"}},
+{diff:1,cat:"Melhoria Contínua",concept:"PDCA",q:"O que é o ciclo PDCA aplicado a times ágeis?",opts:["Plan-Deploy-Check-Archive","Plan-Do-Check-Act — ciclo de melhoria contínua: planejar, executar, medir, ajustar","People-Data-Coach-Adapt","Product-Delivery-Ceremony-Assessment"],ans:1,xp:15,exp:"PDCA (Deming): Plan (definir hipótese de melhoria), Do (experimentar), Check (medir resultado com dados), Act (padronizar se funcionou). É o ciclo de aprendizado das retrospectivas eficazes.",vid:{t:"PDCA — Ciclo de melhoria contínua",u:"https://www.youtube.com/results?search_query=PDCA+continuous+improvement+agile"}},
+{diff:1,cat:"Histórias de Usuário",concept:"INVEST",q:"O que é o critério INVEST para User Stories?",opts:["Indicador de valor de negócio","Acrônimo que define boas histórias: Independent, Negotiable, Valuable, Estimable, Small, Testable","Framework de estimativa em poker","Checklist de aceite para deploy"],ans:1,xp:15,exp:"INVEST: Independent (sem dependências fortes), Negotiable (o como é discutível), Valuable (entrega valor real), Estimable (equipe consegue estimar), Small (cabe numa sprint), Testable (tem critérios claros).",vid:{t:"INVEST User Stories",u:"https://www.youtube.com/results?search_query=INVEST+user+stories+Agile"}},
+// diff 2
+{diff:2,cat:"Lei de Little",concept:"Lei de Little",q:"Lei de Little: Lead Time = WIP ÷ Throughput. Se WIP = 20 e Throughput = 4/semana, qual o Lead Time?",opts:["4 semanas","5 semanas","80 semanas","16 dias"],ans:1,xp:25,exp:"20 ÷ 4 = 5 semanas. A Lei de Little é matemática — não é estimativa. Se reduzir WIP para 12 mantendo throughput, Lead Time cai para 3 semanas.",vid:{t:"Lei de Little — Kanban",u:"https://www.youtube.com/watch?v=CdI6J7bhWpU"}},
+{diff:2,cat:"CFD",concept:"CFD",q:"No CFD (Cumulative Flow Diagram), faixas paralelas de largura constante indicam:",opts:["Gargalo crítico","Fluxo saudável e estável — entradas e saídas equilibradas","Scope creep crescente","Throughput zero"],ans:1,xp:25,exp:"Faixas paralelas com largura constante = fluxo em equilíbrio: taxa de entrada ≈ taxa de saída. Lead Time estável e previsível. Qualquer faixa engrossando sinaliza gargalo.",vid:{t:"Cumulative Flow Diagram Explained",u:"https://www.youtube.com/watch?v=o260BbRb63E"}},
+{diff:2,cat:"Flow Metrics",concept:"Flow Efficiency",q:"Flow Efficiency de 20% significa que:",opts:["20% dos itens entregues no prazo","80% do tempo o item estava esperando em filas ou bloqueios","Time 20% abaixo da capacidade","20 bugs por sprint"],ans:1,xp:25,exp:"Flow Efficiency = Tempo ativo / Lead Time total. 20% significa que apenas 1/5 do tempo houve trabalho ativo. Os outros 80% foram espera.",vid:{t:"Lead Time VS Cycle Time — DevOps and Kanban",u:"https://www.youtube.com/watch?v=fRqUhj3mj70"}},
+{diff:2,cat:"Scrum",concept:"Velocity",q:"Qual a principal vantagem do Burnup Chart em relação ao Burndown?",opts:["Mais fácil de configurar no Jira","Mostra escopo total e mudanças nele, tornando scope creep visível","Conta bugs e dívida técnica","Funciona com story points > 5"],ans:1,xp:25,exp:"Burnup mostra duas linhas: trabalho concluído (sobe) e escopo total. Quando o scope creep acontece, a linha de escopo sobe — visível para todos. O Burndown esconde isso.",vid:{t:"Burnup Chart and Burndown Chart in Scrum",u:"https://www.youtube.com/watch?v=4J7fbgLk_ZQ"}},
+{diff:2,cat:"SLE & Percentis",concept:"SLE",q:"O SLE (Service Level Expectation) usa qual percentil como referência padrão?",opts:["Percentil 50 (mediana)","Percentil 75","Percentil 85","Percentil 99"],ans:2,xp:25,exp:"O P85 é o padrão do SLE: '85% dos itens deste tipo são entregues em até X dias.' Usar P85 em vez de P50 dá uma garantia mais robusta — apenas 15% dos itens ultrapassarão o prazo.",vid:{t:"Service Level Expectation — SLE Kanban",u:"https://www.youtube.com/results?search_query=Service+Level+Expectation+SLE+Kanban"}},
+{diff:2,cat:"DORA",concept:"DORA - Change Failure Rate",q:"Times de elite DORA têm Change Failure Rate (CFR) de quanto?",opts:["Menos de 5%","Entre 16% e 30%","Entre 31% e 45%","Acima de 60%"],ans:0,xp:25,exp:"Times de elite têm CFR < 5%. Times de baixo desempenho chegam a 46-60%. Em fintech, cada falha de deploy pode impactar transações — CFR deve ser monitorado como métrica de negócio.",vid:{t:"DORA — Change Failure Rate",u:"https://www.youtube.com/results?search_query=DORA+Change+Failure+Rate+DevOps"}},
+{diff:2,cat:"EBM",concept:"EBM - Current Value",q:"No EBM, o Current Value (CV) é representado por qual conjunto de métricas?",opts:["Velocity e story points","NPS, satisfação do cliente, receita e retenção","Frequência de deploy e Lead Time","Code coverage e dívida técnica"],ans:1,xp:25,exp:"CV mede o valor que o produto entrega HOJE. Métricas: NPS, taxa de retenção, CSAT, receita recorrente. CV é sempre visto pelos olhos do cliente — não do processo interno.",vid:{t:"EBM Current Value — KVA",u:"https://www.youtube.com/results?search_query=EBM+Current+Value+Scrum+KVA"}},
+{diff:2,cat:"Estatística",concept:"Média, mediana e outliers",q:"O que é a mediana de Cycle Time e por que é preferível à média?",opts:["Soma dividida pela quantidade","Valor central da distribuição ordenada — mais robusta que a média pois não é distorcida por outliers","Sempre igual ao P85","Útil só para distribuições simétricas"],ans:1,xp:25,exp:"Se 90% dos itens levam 5 dias e 10% levam 60 dias, a média pode ser 10 dias — representando poucos itens reais. A mediana (P50) representa melhor a experiência típica.",vid:{t:"Mean vs Median — Statistics for Agile",u:"https://www.youtube.com/results?search_query=mean+median+outliers+statistics+kanban"}},
+{diff:2,cat:"Estatística",concept:"Variabilidade",q:"Por que reduzir variabilidade do Cycle Time é mais valioso que reduzir a média?",opts:["A variabilidade é o número total de dias","Variabilidade (desvio-padrão) mede dispersão — alta variabilidade = previsões menos confiáveis, independente da média","A variabilidade é o número de outliers acima do P85","Variabilidade e média são indicadores equivalentes"],ans:1,xp:25,exp:"Um time que sempre entrega em 5-7 dias (baixa variabilidade) é mais previsível que um que entrega em 2 ou 20 dias (alta variabilidade), mesmo que ambos tenham a mesma média.",vid:{t:"Process Variability — Agile Flow",u:"https://www.youtube.com/results?search_query=process+variability+agile+flow+kanban"}},
+{diff:2,cat:"Kanban e Priorização",concept:"Política Expedite",q:"O que é a política Expedite no Kanban e quando usar?",opts:["Sprint para itens urgentes do PO","Classe de serviço para itens de altíssima urgência que PODEM violar WIP limits — reservada para emergências reais","Método de deploy rápido em produção","Cerimônia de priorização semanal"],ans:1,xp:25,exp:"Expedite é para emergências reais (incidente em produção, compliance crítico). Viola WIP limits e interrompe o fluxo. Deve ser raro — se todo item vira Expedite, a classe perde significado e o fluxo colapsa.",vid:{t:"Kanban Expedite Policy",u:"https://www.youtube.com/results?search_query=Kanban+Expedite+class+of+service"}},
+{diff:2,cat:"Melhoria Contínua",concept:"Pareto",q:"O que é o Diagrama de Pareto e como se usa em retrospectivas de fluxo?",opts:["Diagrama de pizza de bugs","Gráfico de barras decrescente que identifica quais categorias geram 80% dos problemas — priorizando onde atuar","Gráfico de velocidade acumulada","Radar de skills do time"],ans:1,xp:25,exp:"Princípio de Pareto (80/20): 80% dos problemas vêm de 20% das causas. No fluxo: se 70% dos bloqueios vêm de 'aguardando aprovação', atacar essa causa tem 10x mais impacto.",vid:{t:"Diagrama de Pareto",u:"https://www.youtube.com/results?search_query=Pareto+chart+continuous+improvement"}},
+{diff:2,cat:"Histórias de Usuário",concept:"Critérios de aceitação",q:"O que são critérios de aceitação e por que são essenciais?",opts:["Estimativas de esforço","Condições específicas e testáveis que uma story deve atender para ser aceita pelo PO","Aprovações formais de compliance","Critérios de contratação"],ans:1,xp:25,exp:"Critérios de aceitação transformam ambiguidade em clareza testável. Sem critérios, o time pode implementar algo tecnicamente correto mas não o que o cliente esperava — causando retrabalho.",vid:{t:"User Story Acceptance Criteria",u:"https://www.youtube.com/results?search_query=user+story+acceptance+criteria+agile"}},
+{diff:2,cat:"Histórias de Usuário",concept:"Estrutura de User Story",q:"O que é a estrutura 'Como [persona], Quero [ação], Para [valor]'?",opts:["Template de bug report","Formato que captura: quem se beneficia, o que acontece, e por que — orientando ao valor de negócio","Especificação técnica de sistema","Formato de Sprint Goal"],ans:1,xp:25,exp:"A estrutura de User Story (Mike Cohn) garante o 'porquê'. O 'Para' é o valor real — sem ele, o time pode implementar sem entender o propósito. Ex: 'Para agir antes que a janela de denúncia ao regulador expire.'",vid:{t:"User Stories — como escrever bem",u:"https://www.youtube.com/results?search_query=user+stories+how+to+write+agile"}},
+// diff 3
+{diff:3,cat:"Lei de Little",concept:"Lei de Little",q:"Time SRE entrega 6 itens/semana com WIP=18. Para reduzir o Lead Time pela metade mantendo Throughput, qual deve ser o novo WIP?",opts:["9 itens","12 itens","3 itens","6 itens"],ans:0,xp:35,exp:"LT atual = 18 ÷ 6 = 3 semanas. Para LT = 1,5 semana: WIP = LT × Throughput = 1,5 × 6 = 9 itens. Exige WIP limits disciplinados e cultura de terminar antes de começar.",vid:{t:"Lei de Little — cálculo prático",u:"https://www.youtube.com/watch?v=CdI6J7bhWpU"}},
+{diff:3,cat:"Aging WIP",concept:"Aging WIP",q:"O Aging WIP cruza o percentil 85 do Cycle Time histórico. O que isso indica e qual a ação correta?",opts:["Item performando bem — manter","Item em risco de outlier — investigar bloqueios e fazer 'swarm'","Item deve ser cancelado automaticamente","WIP limit foi violado"],ans:1,xp:35,exp:"Quando um item supera o P85 do Cycle Time, está na cauda da distribuição. Ação imediata: investigar bloqueios, fazer 'swarm' (todos focam), comunicar proativamente o stakeholder.",vid:{t:"Aging WIP — Kanban",u:"https://www.youtube.com/results?search_query=Aging+WIP+Kanban+outliers"}},
+{diff:3,cat:"Monte Carlo",concept:"Monte Carlo",q:"A Simulação de Monte Carlo usa qual dado histórico para prever datas de entrega?",opts:["Média de story points das últimas 10 sprints","Distribuição histórica do Throughput semanal","Cycle Time médio dividido pelo número de devs","Velocity multiplicada pelo WIP médio"],ans:1,xp:35,exp:"Monte Carlo usa a distribuição real de Throughput (itens entregues/semana nos últimos 3 meses) para simular milhares de cenários. Resultado: '85% de chance de entregar 50 itens em 9 semanas.'",vid:{t:"Monte Carlo Forecasting in KanbanFlow",u:"https://www.youtube.com/watch?v=DBW5Sk6DK2o"}},
+{diff:3,cat:"CFD",concept:"CFD",q:"No CFD, como você identifica visualmente o Lead Time de um item?",opts:["Pela altura total do eixo Y","Pela distância horizontal entre a entrada e saída de um estado no eixo do tempo","Pela largura vertical de todas as faixas","Pela inclinação da linha de Done"],ans:1,xp:35,exp:"No CFD a distância horizontal entre o momento que um item entrou num estado e o momento que saiu = Lead Time naquele estado. O CFD contém LT, WIP e Throughput num único gráfico.",vid:{t:"CFD — leitura avançada",u:"https://www.youtube.com/watch?v=-ElzoFV2QBI"}},
+{diff:3,cat:"Scrum",concept:"Velocity",q:"Por que Velocity baseada em story points é arriscada como KPI de desempenho?",opts:["Jira não suporta story points","Cria incentivo para inflar estimativas e esconde problemas de qualidade e fluxo","Story points só funcionam para times Kanban","Scrum.org proibiu story points em 2023"],ans:1,xp:35,exp:"Quando Velocity vira KPI, times aprendem a jogá-la: estimam conservadoramente, dividem stories grandes. Velocity sobe, mas Lead Time e qualidade pioram. Throughput (itens/semana) é mais honesto.",vid:{t:"Story Points & Velocity — os riscos",u:"https://www.youtube.com/watch?v=HmtNG3YZWwk"}},
+{diff:3,cat:"EBM",concept:"EBM - Ability to Innovate",q:"A A2I (Ability to Innovate) no EBM diminui principalmente quando:",opts:["Time entrega muitos story points","Alta dívida técnica, incidentes recorrentes e retrabalho consomem a capacidade do time","PO prioriza features de alto valor","Time adota pair programming"],ans:1,xp:35,exp:"A2I mede quanto da capacidade real está disponível para inovar. Dívida técnica, incidentes (baixo MTBF) e retrabalho corroem a A2I. MTBF, Deployment Frequency e % tempo em bugfix são bons proxies.",vid:{t:"EBM — Ability to Innovate (A2I)",u:"https://www.youtube.com/results?search_query=EBM+Ability+to+Innovate+A2I"}},
+{diff:3,cat:"DORA",concept:"DORA - Deployment Frequency",q:"MTTR (Mean Time to Restore) mede qual aspecto da operação?",opts:["Tempo médio entre deploys","Tempo médio para restaurar o serviço após incidente em produção","Frequência de post-mortems","Taxa de mudanças rejeitadas em code review"],ans:1,xp:35,exp:"MTTR é o tempo desde a detecção do incidente até a restauração do serviço. Times de elite DORA: MTTR < 1 hora. Baixo MTTR indica runbooks documentados, automação de rollback e blameless post-mortem.",vid:{t:"DORA Metrics — MTTR e SRE",u:"https://www.youtube.com/shorts/6UrG6FvtSik"}},
+{diff:3,cat:"Kanban e Priorização",concept:"Classes de serviço",q:"O que são classes de serviço no Kanban?",opts:["Categorias de qualidade de código","Categorias de itens com diferentes políticas de priorização e SLEs","Níveis de acesso ao board","Tipos de reuniões de planejamento"],ans:1,xp:35,exp:"Classes de serviço (Expedite, Fixed Date, Standard, Intangible) permitem tratar itens diferentes de forma diferente. Um item Expedite pode violar WIP limits. Cada classe tem seu próprio SLE e política.",vid:{t:"Kanban Classes of Service",u:"https://www.youtube.com/results?search_query=Kanban+classes+of+service"}},
+{diff:3,cat:"Estatística",concept:"Coeficiente de variação",q:"O que é o coeficiente de variação (CV) e como se interpreta num histograma de Cycle Time?",opts:["Custo de variação do projeto","CV = desvio-padrão ÷ média. CV > 1 indica alta variabilidade relativa — processo instável","CV = máximo - mínimo do histograma","CV = percentual de itens acima do P85"],ans:1,xp:35,exp:"CV < 0.5 = processo estável (boa base para SLE). CV entre 0.5-1 = moderadamente variável. CV > 1 = processo instável — provavelmente há outliers sistêmicos. Ação: investigar causas de variação antes de comprometer SLEs.",vid:{t:"Coefficient of Variation — Statistics",u:"https://www.youtube.com/results?search_query=coefficient+of+variation+statistics"}},
+{diff:3,cat:"Melhoria Contínua",concept:"5 Porquês",q:"Como os 5 Porquês se aplicam na análise de um item com Aging WIP muito alto?",opts:["São usados para estimar story points","Perguntando 'por quê' iterativamente até chegar à causa raiz — cada iteração aprofunda a análise além do sintoma","Determinam quem culpar pelo atraso","São uma técnica de estimativa do SAFe"],ans:1,xp:35,exp:"5 Porquês (Sakichi Toyoda): cada 'por quê' leva a uma causa mais profunda. Um item com Aging WIP alto tem um SINTOMA ('está bloqueado') mas a causa raiz pode ser: política de aprovação, falta de critérios, processo não revisado.",vid:{t:"5 Porquês — Root Cause Analysis",u:"https://www.youtube.com/results?search_query=5+Whys+root+cause+analysis"}},
+{diff:3,cat:"Melhoria Contínua",concept:"Ishikawa",q:"O que é o Diagrama de Ishikawa e como se usa em times ágeis?",opts:["Gráfico de tendência de Lead Time","Diagrama de causa-e-efeito (espinha de peixe) para identificar causas raiz de problemas recorrentes","Diagrama de fluxo do processo","Mapa de skills do time"],ans:1,xp:35,exp:"Ishikawa (espinha de peixe) mapeia causas possíveis de um problema em categorias (pessoas, processo, tecnologia). Em times ágeis, é usado na retrospectiva para ir além dos sintomas e encontrar causas raiz.",vid:{t:"Diagrama de Ishikawa",u:"https://www.youtube.com/results?search_query=Ishikawa+fishbone+root+cause"}},
+{diff:3,cat:"Kanban e Priorização",concept:"Replenishment",q:"O que é Replenishment Meeting e como garante que o backlog alimente o fluxo de forma saudável?",opts:["Retrospectiva quinzenal do backlog","Cadência onde o time decide quais itens entram no fluxo respeitando WIP limits, classes de serviço e capacidade disponível","Sprint Planning adaptado para Kanban","Revisão do roadmap com stakeholders"],ans:1,xp:35,exp:"Replenishment Meeting: o time olha a capacidade disponível (WIP limit - itens atuais), revisa os itens candidatos do backlog (priorizados por CoD, classe de serviço) e seleciona apenas o que cabe. Mantém o pull saudável.",vid:{t:"Kanban Replenishment Meeting",u:"https://www.youtube.com/results?search_query=Kanban+replenishment+meeting"}},
+{diff:3,cat:"Histórias de Usuário",concept:"Fatiamento vertical",q:"O que é fatiamento vertical de histórias (Vertical Slicing)?",opts:["Dividir por camadas técnicas (front, back, banco)","Dividir pelo valor de negócio entregável — cada fatia atravessa todas as camadas técnicas e entrega valor independente","Separar bugs de features no backlog","Dividir stories > 8 pontos em tasks técnicas"],ans:1,xp:35,exp:"Fatiamento vertical: cada fatia atravessa todas as camadas e entrega valor independente. Oposto ao fatiamento horizontal (por camada técnica, sem valor isolado). Histórias verticais entram no sprint e podem ser testadas pelo usuário.",vid:{t:"Vertical Slicing — User Stories",u:"https://www.youtube.com/results?search_query=vertical+slicing+user+stories"}},
+{diff:3,cat:"Flow Metrics",concept:"Flow Efficiency",q:"Como calcular a Flow Efficiency usando dados do Jira?",opts:["FE = Story Points ÷ Dias de sprint","FE = ΣTempo ativo (In Progress + In Review) ÷ Lead Time total × 100","FE = Throughput ÷ WIP × 100","FE = Itens concluídos ÷ Total de itens criados × 100"],ans:1,xp:35,exp:"Para calcular no Jira: some o tempo nos estados ativos (In Progress, In Review, In QA) e divida pelo Lead Time total. A maioria dos dashboards de fluxo (ActionableAgile, LinearB) calcula automaticamente. Valor típico em fintechs: 10-20%.",vid:{t:"Flow Efficiency — cálculo no Jira",u:"https://www.youtube.com/results?search_query=Flow+Efficiency+Jira+calculation+Kanban"}},
+{diff:3,cat:"Melhoria Contínua",concept:"Experimentos de melhoria",q:"O que é um experimento de melhoria bem desenhado no contexto ágil?",opts:["Qualquer mudança de processo na próxima sprint","Um experimento tem: hipótese clara, métrica de sucesso definida antes, duração limitada, e apenas UMA mudança por vez para isolar o efeito","Uma reunião de inovação trimestral","Apenas para times de P&D"],ans:1,xp:35,exp:"Experimento eficaz: 'Hipótese: se limitarmos WIP em Review para 3, o Cycle Time médio cairá 20% em 4 semanas.' Múltiplas mudanças simultâneas = impossível saber qual funcionou. Experimentos isolados = aprendizado real.",vid:{t:"Experiments in Agile — melhoria contínua",u:"https://www.youtube.com/results?search_query=continuous+improvement+experiment+agile+kanban"}},
+// diff 4
+{diff:4,cat:"Monte Carlo",concept:"Monte Carlo",q:"Qual a diferença entre usar P50 e P85 em uma previsão Monte Carlo para comprometer data com stakeholders?",opts:["Nenhuma — nomes diferentes","P50 significa 50% de chance de cumprir (falhará metade das vezes); P85 significa 85% de chance — muito mais seguro para compromissos externos","P85 é sempre 2x mais lento que P50","P50 para Scrum e P85 só para Kanban"],ans:1,xp:45,exp:"P50 (mediana) = você cumprirá o prazo em 50% dos cenários — como lançar uma moeda. Para compromissos externos, P85 é o mínimo. Para releases com reguladores em fintech, P95 pode ser mais adequado.",vid:{t:"Monte Carlo — percentil certo",u:"https://www.youtube.com/watch?v=DBW5Sk6DK2o"}},
+{diff:4,cat:"Flow Metrics",concept:"CFD",q:"Em um sistema Kanban maduro, qual combinação de métricas fornece a visão mais completa?",opts:["Velocity + Burndown + Story Points","CFD + Aging WIP + Monte Carlo + SLE + Throughput Scatter Plot","Lead Time médio + Bugs + Satisfação","Deployment Frequency + NPS + Sprint Goal"],ans:1,xp:45,exp:"A combinação completa: CFD (saúde do fluxo), Aging WIP (risco em itens), Monte Carlo (previsão probabilística), SLE (compromisso com cliente) e Throughput Scatter Plot (variabilidade). Nenhuma métrica isolada conta a história completa.",vid:{t:"Kanban Metrics — kit completo",u:"https://www.youtube.com/watch?v=o260BbRb63E"}},
+{diff:4,cat:"SLE & Percentis",concept:"SLE",q:"Time tem Cycle Time P85=12 dias. SLE='85% em até 12 dias'. Um item está há 14 dias em andamento. Qual a ação correta?",opts:["Aguardar — 14 dias próximo do esperado","Encerrar o item e recriar","Ativar protocolo: SLE violado — investigar bloqueio, fazer swarm e comunicar proativamente o stakeholder","Recalcular o SLE com os últimos 30 dias"],ans:2,xp:45,exp:"14 dias > P85 (12 dias): o time falhou o compromisso de serviço. A ação é imediata: investigar bloqueios, fazer 'swarm', comunicar proativamente. Aging WIP acima do SLE é alarme de qualidade de fluxo.",vid:{t:"SLE — Service Level Expectation na prática",u:"https://www.youtube.com/results?search_query=Service+Level+Expectation+SLE+Kanban"}},
+{diff:4,cat:"EBM",concept:"EBM - Unrealized Value",q:"Como o Unrealized Value (UV) do EBM orienta a estratégia de product discovery?",opts:["UV mede código não deployado","UV é o gap entre a satisfação atual do cliente e a satisfação máxima possível — revela onde investir para capturar mais valor","UV conta features canceladas no backlog","UV é sinônimo de dívida técnica"],ans:1,xp:45,exp:"UV é a oportunidade não capturada: o que o produto PODERIA gerar se atendesse plenamente as necessidades. Métricas: pesquisas de satisfação máxima, análise de churn, features de concorrentes que você não tem.",vid:{t:"EBM — Unrealized Value",u:"https://www.youtube.com/results?search_query=EBM+Unrealized+Value+Scrum"}},
+{diff:4,cat:"DORA",concept:"DORA - Deployment Frequency",q:"Time Cloud/SRE tem Deployment Frequency de 1 deploy por quinzena e MTTR de 4 horas. Qual o nível DORA e o principal risco?",opts:["Elite — MTTR < 1 dia é excelente","Médio/Low — deploys quinzenais são em lote com alto risco de falha em cascata","Alto desempenho — 1 deploy seguro é melhor que vários com risco","DORA não se aplica a times de infra"],ans:1,xp:45,exp:"Deployment Frequency quinzenal classifica o time como Low/Medium. Deploys grandes têm CFR maior porque mais mudanças são agrupadas. A solução é CI/CD robusto, testes automatizados e feature flags.",vid:{t:"DORA — Deployment Frequency e segurança",u:"https://www.youtube.com/results?search_query=DORA+deployment+frequency+safe+DevOps"}},
+{diff:4,cat:"Kanban e Priorização",concept:"Custo de atraso",q:"O que é o Custo de Atraso (Cost of Delay) e como muda a priorização?",opts:["Custo de atrasar o início de uma sprint","Valor de negócio que se perde a cada semana que uma feature não está em produção — permite priorizar pelo impacto financeiro real, não pelo esforço","Taxa de juros sobre investimento em produto","Custo de consultores para acelerar"],ans:1,xp:45,exp:"Cost of Delay (Don Reinertsen): 'Quanto custa cada semana que essa feature não existe?' Feature com CoD de R$50k/semana deve ser priorizada sobre outra com R$10k/semana, independente do esforço. WSJF usa CoD ÷ Duração.",vid:{t:"Cost of Delay — Kanban e Priorização",u:"https://www.youtube.com/results?search_query=Cost+of+Delay+Kanban+WSJF"}},
+{diff:4,cat:"Estatística",concept:"Scatter plot e correlação",q:"Como um Scatter Plot de Cycle Time difere de um histograma e quando cada um é mais útil?",opts:["São gráficos idênticos com nomes diferentes","Histograma mostra distribuição de frequência; Scatter plot mostra cada item individualmente no tempo — o scatter revela padrões temporais que o histograma esconde","Scatter só funciona com mais de 100 itens","Histograma é sempre preferível"],ans:1,xp:45,exp:"Histograma: 'Qual a distribuição típica de tempo?' — bom para SLE. Scatter plot: 'Quando os outliers acontecem?' — bom para identificar eventos sistêmicos. Juntos revelam O QUÊ (histograma) e QUANDO/POR QUÊ (scatter).",vid:{t:"Scatter Plot vs Histogram — Flow Analytics",u:"https://www.youtube.com/results?search_query=scatter+plot+histogram+kanban+flow+analytics"}},
+{diff:4,cat:"Histórias de Usuário",concept:"Story Mapping",q:"O que é Story Mapping e quando usar?",opts:["Forma de estimar stories em mapa mental","Técnica que organiza as stories por jornada do usuário (eixo X) e prioridade (eixo Y) — revelando o MVP para cada release","Diagrama de fluxo de dados do produto","Mapa de dependências entre épicos"],ans:1,xp:45,exp:"User Story Mapping (Jeff Patton): o eixo horizontal é a sequência de atividades do usuário (backbone); o eixo vertical é o nível de detalhe e prioridade. Fatiar horizontalmente revela o MVP de cada release.",vid:{t:"User Story Mapping — Jeff Patton",u:"https://www.youtube.com/watch?v=uj3PlPDAlHU"}},
+{diff:4,cat:"Histórias de Usuário",concept:"3Cs e colaboração",q:"O que são os 3Cs de User Stories (Card, Conversation, Confirmation)?",opts:["Framework de estimativa de stories","Card é o lembrete da conversa; Conversation é o diálogo que gera o entendimento real; Confirmation são os critérios de aceite que o confirmam — juntos garantem que a história seja uma promessa de conversa","Os 3Cs definem o ciclo de vida de um sprint","Os 3Cs são uma técnica de validação de deploy"],ans:1,xp:45,exp:"Ron Jeffries: a história no cartão é apenas o lembrete da conversa que precisa acontecer. Times que tratam o cartão como especificação completa param de conversar — e perdem o alinhamento.",vid:{t:"3Cs User Stories",u:"https://www.youtube.com/results?search_query=3Cs+user+stories+conversation+confirmation"}},
+{diff:4,cat:"Melhoria Contínua",concept:"Otimização sistêmica",q:"Qual é a diferença entre otimização local e sistêmica em contextos ágeis?",opts:["Local é sempre melhor — mais focada","Otimização local melhora uma parte mas pode degradar o todo; sistêmica considera o impacto em todo o fluxo — a restrição do sistema, não da etapa mais rápida","São sinônimos em ágil","Sistêmica só se aplica a times grandes"],ans:1,xp:45,exp:"TOC (Goldratt): melhorar uma etapa que não é a restrição não melhora o fluxo total. Se o gargalo é Review e você acelera Development, o WIP em Review só aumenta. Foque na restrição atual do sistema inteiro.",vid:{t:"Systems Thinking — otimização sistêmica",u:"https://www.youtube.com/results?search_query=systems+thinking+optimization+agile"}},
+// diff 5
+{diff:5,cat:"Agile Coaching",concept:"Flow Efficiency",q:"Como um Agile Coach usa Flow Efficiency de 12% para gerar mudança sistêmica com a liderança?",opts:["Apresenta como prova que o time precisa trabalhar mais horas","Converte em impacto financeiro: 88% do tempo é espera por aprovações/silos, quantificando o custo do SISTEMA — não do time","Usa para justificar contratação de mais devs","Apresenta como benchmark negativo comparando com outros times"],ans:1,xp:60,exp:"Coaching sistêmico: 12% de FE = 88% de desperdício gerado pelo sistema. O coach traduz: 'Cada feature que deveria levar 2 semanas leva 16 por aprovações cruzadas. Se resolvermos as dependências, lançamos 5x mais experimentos por trimestre.'",vid:{t:"Agile Coaching — métricas para liderança",u:"https://www.youtube.com/results?search_query=agile+coaching+metrics+leadership+flow"}},
+{diff:5,cat:"Agile Coaching",concept:"Métricas sem comparação de times",q:"Um VP quer usar Lead Time médio como OKR de 'agilidade'. Como o coach deve responder?",opts:["Aprovar — Lead Time médio é bom","Aceitar e adicionar Velocity para balancear","Desafiar: Lead Time médio esconde variabilidade; propor P85 do Lead Time + Throughput + métrica de outcome (NPS ou T2M)","Rejeitar qualquer OKR baseado em fluxo"],ans:2,xp:60,exp:"O coach educa: Lead Time médio pode parecer estável enquanto variabilidade explode. Para OKR organizacional: P85 Lead Time (consistência) + Throughput (capacidade) + outcome (NPS, T2M). Sem outcome, otimiza processo sem resultado de negócio.",vid:{t:"OKRs e métricas ágeis",u:"https://www.youtube.com/results?search_query=OKR+agile+metrics+outcome+output"}},
+{diff:5,cat:"Agile Coaching",concept:"Aging WIP",q:"Dois times com Throughput similar — Time B tem 80% do WIP concentrado em itens muito antigos. O que o coach investiga primeiro?",opts:["Adicionar mais pessoas ao Time B","Investigar dependências externas, DoD ambíguo ou política implícita de priorização que impede a conclusão","Redefinir o Sprint Goal do Time B","Comparar velocidades em story points"],ans:1,xp:60,exp:"Concentração de Aging WIP sinaliza patologia sistêmica. Causas: dependências externas não gerenciadas; DoD ambíguo; política implícita de priorização; silos técnicos. O coach facilita diagnóstico usando CFD + Aging WIP juntos.",vid:{t:"Aging WIP concentrado — diagnóstico sistêmico",u:"https://www.youtube.com/results?search_query=aging+WIP+blocked+items+Kanban+coaching"}},
+{diff:5,cat:"Agile Coaching",concept:"DORA e outcomes",q:"Time SRE tem MTTR em queda (bom) mas Deployment Frequency também em queda (ruim). Como o coach interpreta?",opts:["MTTR em queda é suficiente","O time está com medo de fazer deploys após incidentes (fear-driven): deploys maiores e espaçados = maior risco = mais incidentes = ciclo vicioso","Os dados se cancelam — sistema estável","MTTR melhorou porque terceirizaram deploys"],ans:1,xp:60,exp:"Fear-driven deployment frequency: após incidentes o time fica conservador → deploys maiores → maior blast radius → mais incidentes → mais medo. O AC quebra o ciclo com: blameless post-mortem, feature flags, melhoria de CI/CD.",vid:{t:"Fear-driven deployment — SRE e DORA",u:"https://www.youtube.com/results?search_query=fear+driven+deployment+frequency+SRE"}},
+{diff:5,cat:"EBM",concept:"Coaching orientado a outcomes",q:"Como o EBM pode demonstrar ROI de investimento em agilidade para um conselho executivo?",opts:["Mostrando o aumento de story points","Correlacionando melhoria em T2M e A2I com impacto mensurável em CV (receita, NPS, retenção)","Apresentando certificações ágeis do time","Comparando Velocity com outros times"],ans:1,xp:60,exp:"A narrativa EBM para o board: 'Investimos em CI/CD e reduzimos T2M de 6 semanas para 2 (A2I melhorou). Resultado em CV: +15% NPS, +8% retenção, 3x mais experimentos.' Conecta práticas ágeis a resultados de negócio.",vid:{t:"EBM — ROI da transformação ágil",u:"https://www.youtube.com/results?search_query=EBM+ROI+agile+transformation+business+outcomes"}},
+{diff:5,cat:"Melhoria Contínua",concept:"Otimização sistêmica",q:"O que é 'Otimização Sistêmica' em termos de Teoria das Restrições aplicada ao Agile Coaching?",opts:["Local é sempre melhor — mais focada","O gargalo define o ritmo de todo o sistema: melhorar etapas que não são a restrição não aumenta o throughput total","São sinônimos com origens diferentes","Sistêmica só se aplica a organizações com 500+ pessoas"],ans:1,xp:60,exp:"TOC de Goldratt no coaching: identificar a restrição (estado com maior WIP, via CFD), explorar sua capacidade máxima antes de aumentar, subordinar todo o resto à restrição. O coach facilita essa análise e prioriza intervenções pelo impacto sistêmico.",vid:{t:"Theory of Constraints — Agile",u:"https://www.youtube.com/results?search_query=theory+of+constraints+agile+kanban"}},
+{diff:5,cat:"Histórias de Usuário",concept:"BDD e Given When Then",q:"Como o Agile Coach usa 'Given-When-Then' (BDD) para melhorar critérios de aceite?",opts:["BDD é só para QA","BDD transforma critérios vagos em exemplos concretos e testáveis: Given (contexto), When (ação), Then (resultado). O coach facilita workshops para que PO e time escrevam exemplos reais ANTES de codar","BDD é um framework de deploy automatizado","O coach usa BDD para medir velocity do time de QA"],ans:1,xp:60,exp:"BDD como prática de colaboração: ao escrever 'Dado que o cliente tem saldo de R$100, Quando faz saque de R$150, Então o sistema exibe mensagem de saldo insuficiente', o time alinha entendimento ANTES de implementar — reduzindo bugs de interpretação.",vid:{t:"BDD e Given When Then",u:"https://www.youtube.com/results?search_query=BDD+Given+When+Then+user+stories"}}
+];
+
+const MATERIALS={"Lead Time":["Lead Time vs Cycle Time","https://www.youtube.com/watch?v=xm7t7OJGps4"],"Cycle Time":["Lead Time vs Cycle Time","https://www.youtube.com/watch?v=xm7t7OJGps4"],"Throughput":["Throughput — Kanban","https://www.youtube.com/watch?v=OfrGQtFa3lU"],"WIP":["WIP / Work in Progress","https://www.youtube.com/watch?v=tINK8GXgPIk"],"WIP limits":["Kanban e o Limite de WIP","https://www.youtube.com/watch?v=tINK8GXgPIk"],"Aging WIP":["Aging WIP — Kanban","https://www.youtube.com/results?search_query=Aging+WIP+Kanban"],"Flow Efficiency":["Flow Efficiency","https://www.youtube.com/watch?v=fRqUhj3mj70"],"Lei de Little":["Lei de Little — Kanban","https://www.youtube.com/watch?v=CdI6J7bhWpU"],"CFD":["Cumulative Flow Diagram","https://www.youtube.com/watch?v=o260BbRb63E"],"Monte Carlo":["Monte Carlo Forecasting","https://www.youtube.com/watch?v=DBW5Sk6DK2o"],"Percentis":["Percentis P85 — SLE","https://www.youtube.com/results?search_query=percentile+P85+SLE+Kanban"],"SLE":["Service Level Expectation","https://www.youtube.com/results?search_query=SLE+Kanban"],"Distribuição de Lead Time":["Lead Time Distribution","https://www.youtube.com/results?search_query=Lead+Time+distribution+Kanban"],"Scatter plot e correlação":["Scatter Plot — Flow","https://www.youtube.com/results?search_query=scatter+plot+flow+kanban"],"Média, mediana e outliers":["Mean vs Median","https://www.youtube.com/results?search_query=mean+median+outliers+kanban"],"Variabilidade":["Process Variability","https://www.youtube.com/results?search_query=process+variability+agile"],"Coeficiente de variação":["Coefficient of Variation","https://www.youtube.com/results?search_query=coefficient+of+variation+statistics"],"Distribuições e histogramas":["Histogramas","https://www.youtube.com/results?search_query=histogram+kanban"],"Interpretação de percentis":["Percentis","https://www.youtube.com/results?search_query=percentiles+kanban"],"Média versus P85":["Média vs P85","https://www.youtube.com/results?search_query=P85+lead+time+kanban"],"Políticas explícitas de priorização":["Kanban Explicit Policies","https://www.youtube.com/results?search_query=Kanban+explicit+policies"],"Classes de serviço":["Classes of Service","https://www.youtube.com/results?search_query=Kanban+classes+of+service"],"Expedite e classes de serviço":["Expedite","https://www.youtube.com/results?search_query=Kanban+Expedite+class"],"Política Expedite":["Política Expedite","https://www.youtube.com/results?search_query=Kanban+Expedite+policy"],"Priorização por valor e risco":["Priorização","https://www.youtube.com/results?search_query=Kanban+prioritization+value"],"Custo de atraso":["Cost of Delay","https://www.youtube.com/results?search_query=Cost+of+Delay+Kanban"],"Replenishment":["Replenishment Meeting","https://www.youtube.com/results?search_query=Kanban+replenishment"],"PDCA":["PDCA","https://www.youtube.com/results?search_query=PDCA+continuous+improvement+agile"],"5 Porquês":["5 Whys","https://www.youtube.com/results?search_query=5+Whys+root+cause"],"Ishikawa":["Ishikawa","https://www.youtube.com/results?search_query=Ishikawa+fishbone"],"Pareto":["Pareto","https://www.youtube.com/results?search_query=Pareto+chart+improvement"],"Retrospectiva e foco":["Retrospectivas","https://www.youtube.com/results?search_query=agile+retrospective"],"Experimentos de melhoria":["Experimentos","https://www.youtube.com/results?search_query=continuous+improvement+experiment+agile"],"Experimentos e causalidade":["Experimentos e causalidade","https://www.youtube.com/results?search_query=agile+experiments+causality"],"Otimização sistêmica":["Systems Thinking","https://www.youtube.com/results?search_query=systems+thinking+optimization+agile"],"Estrutura de User Story":["User Stories","https://www.youtube.com/results?search_query=user+stories+Agile"],"INVEST":["INVEST","https://www.youtube.com/results?search_query=INVEST+user+stories"],"Qualidade de User Story":["Qualidade de User Stories","https://www.youtube.com/results?search_query=good+user+story"],"Critérios de aceitação":["Critérios de Aceitação","https://www.youtube.com/results?search_query=user+story+acceptance+criteria"],"Fatiamento vertical":["Vertical Slicing","https://www.youtube.com/results?search_query=vertical+slicing+user+stories"],"BDD e Given When Then":["BDD","https://www.youtube.com/results?search_query=BDD+Given+When+Then"],"Story Mapping":["User Story Mapping","https://www.youtube.com/watch?v=uj3PlPDAlHU"],"3Cs e colaboração":["3Cs User Stories","https://www.youtube.com/results?search_query=3Cs+user+stories"],"Histórias orientadas a valor":["User Stories orientadas a valor","https://www.youtube.com/results?search_query=user+stories+business+value"],"EBM - Current Value":["EBM Current Value","https://www.youtube.com/results?search_query=EBM+Current+Value+Scrum"],"EBM - Unrealized Value":["EBM Unrealized Value","https://www.youtube.com/results?search_query=EBM+Unrealized+Value"],"EBM - Time to Market":["EBM Time to Market","https://www.youtube.com/results?search_query=EBM+Time+to+Market"],"EBM - Ability to Innovate":["EBM A2I","https://www.youtube.com/results?search_query=EBM+Ability+to+Innovate"],"DORA - Deployment Frequency":["DORA Metrics","https://www.youtube.com/shorts/6UrG6FvtSik"],"DORA - Change Failure Rate":["DORA CFR","https://www.youtube.com/results?search_query=DORA+Change+Failure+Rate"],"DORA e outcomes":["DORA outcomes","https://www.youtube.com/results?search_query=DORA+metrics+outcomes"],"Métricas sem comparação de times":["Métricas — não compare times","https://www.youtube.com/results?search_query=agile+metrics+teams"],"Coaching orientado a outcomes":["Agile Coaching outcomes","https://www.youtube.com/results?search_query=agile+coaching+outcomes"],"Velocity":["Story Points & Velocity","https://www.youtube.com/watch?v=Und8DgcUQf8"],"Sprint":["Scrum Sprint","https://www.youtube.com/results?search_query=Scrum+Sprint"],"Sprint Goal":["Sprint Goal","https://www.youtube.com/results?search_query=Sprint+Goal+Scrum"],"Product Goal":["Product Goal","https://www.youtube.com/results?search_query=Scrum+Product+Goal"],"Definition of Done":["Definition of Done","https://www.youtube.com/results?search_query=Definition+of+Done+Scrum"],"Agile Coaching":["Agile Coaching","https://www.youtube.com/results?search_query=agile+coaching+competencies"]};
+
+const TOPICS=[['Scrum',['Sprint','Sprint Goal','Product Goal','Definition of Done','Velocity']],['Flow & Métricas',['Lead Time','Cycle Time','Throughput','WIP','WIP limits','Aging WIP','Flow Efficiency','Lei de Little','CFD','Monte Carlo','Percentis','SLE']],['Medição e Análise',['Média, mediana e outliers','Variabilidade','Coeficiente de variação','Distribuição de Lead Time','Scatter plot e correlação','Distribuições e histogramas','Interpretação de percentis','Média versus P85']],['Kanban e Priorização',['Políticas explícitas de priorização','Classes de serviço','Expedite e classes de serviço','Política Expedite','Priorização por valor e risco','Custo de atraso','Replenishment','WIP limits']],['Melhoria Contínua',['PDCA','5 Porquês','Ishikawa','Pareto','Retrospectiva e foco','Experimentos de melhoria','Experimentos e causalidade','Otimização sistêmica']],['Histórias de Usuário',['Estrutura de User Story','INVEST','Qualidade de User Story','Critérios de aceitação','Fatiamento vertical','BDD e Given When Then','Story Mapping','3Cs e colaboração','Histórias orientadas a valor']],['EBM',['EBM - Current Value','EBM - Unrealized Value','EBM - Time to Market','EBM - Ability to Innovate']],['DORA',['DORA - Deployment Frequency','DORA - Change Failure Rate','DORA e outcomes']],['Agile Coaching',['Métricas sem comparação de times','Coaching orientado a outcomes','Agile Coaching']]];
+const LEVELS=[{n:1,label:'🌱 Scrum Master Júnior',color:'#6366f1',diffMax:2},{n:2,label:'⚙️ Scrum Master Pleno',color:'#3b82f6',diffMax:3},{n:3,label:'🔥 Scrum Master Sênior',color:'#06b6d4',diffMax:4},{n:4,label:'🧭 Agile Coach',color:'#10b981',diffMax:5},{n:5,label:'🏆 Especialista em Agile Coaching',color:'#f59e0b',diffMax:5}];
+const REQUIRED_BY_LEVEL={1:['Scrum','Flow & Métricas'],2:['Kanban e Priorização','DORA','EBM'],3:['Medição e Análise','Melhoria Contínua'],4:['Histórias de Usuário','Agile Coaching']};
+const PROMOTION_SCORE=75,REQUIRED_DOMAIN=60,SESSION_SIZE=12,EXAM_SIZE=12;
+const ACH=[['first','🎮','Primeira missão','Conclua seu primeiro treinamento.'],['streak5','🔥','5 em sequência','Acerte 5 questões consecutivas.'],['recover10','🩹','Recuperador','Recupere 10 erros.'],['master90','🧠','Domínio 90','Chegue a 90% em um conceito.'],['flow','🌊','Mestre do Flow','90% em 5 conceitos de Flow.'],['story','✍️','Story Crafter','80% em 5 conceitos de Histórias.'],['kanban','🧭','Kanban Estratégico','80% em 5 conceitos de Kanban.'],['coach','🏆','Olhar de Coach','Passe uma avaliação de promoção.']];
+
+function catGroup(c){for(const[g,cs]of TOPICS)if(cs.includes(c))return g;return 'Flow & Métricas';}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+function materialFor(q){const c=q.concept;if(MATERIALS[c])return{title:MATERIALS[c][0],url:MATERIALS[c][1]};return{title:'Vídeos sobre '+c,url:'https://www.youtube.com/results?search_query='+encodeURIComponent(c+' Agile')};}
+const BANK=BANK_RAW.map((q,i)=>({...q,id:q.id||('Q'+String(i+1).padStart(3,'0'))}));
+
+function defaultProfile(){return{level:1,xp:0,streak:0,lastDay:null,bestStreak:0,totalAnswered:0,totalCorrect:0,recovered:0,history:[],mastery:{},achievements:{},quizSeen:{},trainingCount:0,promotionCount:0,daily:{date:null,done:false,score:0}};}
+let profile=defaultProfile();
+let state={mode:'training',questions:[],idx:0,results:[],sessionCorrect:0,sessionStreak:0};
+let syncTimer=null;
+
+function dayKey(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function ensureDay(){const d=dayKey();if(profile.lastDay!==d){const prev=profile.lastDay;profile.streak=prev?(isYesterday(prev,d)?profile.streak+1:1):1;profile.bestStreak=Math.max(profile.bestStreak,profile.streak);profile.lastDay=d;}}
+function isYesterday(a,b){const x=new Date(a+'T12:00:00'),y=new Date(b+'T12:00:00');return Math.round((y-x)/86400000)===1;}
+function mastery(c){return profile.mastery[c]||(profile.mastery[c]={seen:0,correct:0,last:0,recovery:0});}
+function masteryPct(c){const m=mastery(c);return m.seen?Math.round(m.correct/m.seen*100):0;}
+function weakScore(q){const m=mastery(q.concept);const p=m.seen?m.correct/m.seen:.5;return(1-p)*100+Math.random()*35;}
+function levelBand(){return LEVELS[profile.level-1].diffMax;}
+function uniquePick(pool,n){const used=new Set(),out=[];const unseen=pool.filter(q=>!profile.quizSeen[q.id]);const source=unseen.length>=n?unseen:unseen.concat(pool.filter(q=>!unseen.includes(q)));const sorted=[...source].sort((a,b)=>weakScore(b)-weakScore(a));for(const q of sorted){if(!used.has(q.id)){used.add(q.id);out.push(q);if(out.length===n)break;}}return out;}
+function markSeen(qs){qs.forEach(q=>{profile.quizSeen[q.id]=Date.now();});}
+
+// CLOUD SYNC
+async function syncToCloud(){
+ if(!currentUser)return;
+ const uid=currentUser.id;
+ try{
+  await sb.upsertProfile({user_id:uid,level:profile.level,xp:profile.xp,streak:profile.streak,best_streak:profile.bestStreak,last_day:profile.lastDay,total_answered:profile.totalAnswered,total_correct:profile.totalCorrect,recovered:profile.recovered,achievements:profile.achievements,daily:profile.daily,training_count:profile.trainingCount,promotion_count:profile.promotionCount});
+  const rows=Object.entries(profile.mastery).filter(([,m])=>m.seen>0).map(([concept,m])=>({user_id:uid,concept,seen:m.seen,correct:m.correct,recovery:m.recovery||0}));
+  if(rows.length)await sb.upsertMastery(rows);
+ }catch(e){console.warn('sync',e);}
+}
+async function loadFromCloud(){
+ if(!currentUser)return false;
+ const uid=currentUser.id;
+ try{
+  const[prof,mast]=await Promise.all([sb.getProfile(uid),sb.getMastery(uid)]);
+  if(prof){profile.level=prof.level||1;profile.xp=prof.xp||0;profile.streak=prof.streak||0;profile.bestStreak=prof.best_streak||0;profile.lastDay=prof.last_day||null;profile.totalAnswered=prof.total_answered||0;profile.totalCorrect=prof.total_correct||0;profile.recovered=prof.recovered||0;profile.achievements=prof.achievements||{};profile.daily=prof.daily||{};profile.trainingCount=prof.training_count||0;profile.promotionCount=prof.promotion_count||0;}
+  if(mast&&mast.length)mast.forEach(m=>{profile.mastery[m.concept]={seen:m.seen,correct:m.correct,recovery:m.recovery||0,last:0};});
+  return true;
+ }catch(e){return false;}
+}
+function save(){
+ localStorage.setItem('agile-academy-v3',JSON.stringify(profile));
+ clearTimeout(syncTimer);syncTimer=setTimeout(syncToCloud,2000);
+ updateAll();
+}
+
+// SESSIONS
+function buildTraining(){const max=levelBand();let pool=BANK.filter(q=>q.diff<=max);const needed=uniquePick(pool,SESSION_SIZE);if(needed.length<SESSION_SIZE)for(const q of BANK)if(!needed.find(x=>x.id===q.id)){needed.push(q);if(needed.length===SESSION_SIZE)break;}return needed.map(x=>({...x,context:'training'}));}
+function buildExam(){const req=REQUIRED_BY_LEVEL[profile.level]||[];const picks=[];req.forEach(g=>{const p=BANK.filter(q=>catGroup(q.concept)===g||q.cat===g);const one=uniquePick(p,Math.max(1,Math.floor(EXAM_SIZE/req.length)))[0];if(one&&!picks.find(x=>x.id===one.id))picks.push({...one,context:'exam'});});const rest=uniquePick(BANK.filter(q=>q.diff>=Math.max(2,profile.level)&&!picks.find(x=>x.id===q.id)),EXAM_SIZE-picks.length);return[...picks,...rest].slice(0,EXAM_SIZE).sort(()=>Math.random()-.5).map(x=>({...x,context:'exam'}));}
+function startTraining(){ensureDay();state={mode:'training',questions:buildTraining(),idx:0,results:[],sessionCorrect:0,sessionStreak:0};markSeen(state.questions);save();openQuiz();}
+function startExam(){if(profile.level>=5){alert('Você já está no nível máximo.');return;}ensureDay();state={mode:'exam',questions:buildExam(),idx:0,results:[],sessionCorrect:0,sessionStreak:0};markSeen(state.questions);save();openQuiz();}
+function startDaily(){ensureDay();const d=dayKey();if(profile.daily.date===d&&profile.daily.done){alert('Desafio de hoje já concluído! Volte amanhã.');return;}const seed=parseInt(d.replaceAll('-',''));const pool=BANK.filter(q=>q.diff>=Math.max(2,profile.level));const qs=[];let i=seed%pool.length;while(qs.length<5){const q=pool[i%pool.length];if(!qs.find(x=>x.id===q.id))qs.push({...q,context:'daily'});i+=17;}state={mode:'daily',questions:qs,idx:0,results:[],sessionCorrect:0,sessionStreak:0};markSeen(state.questions);save();openQuiz();}
+function startRecommended(){const weak=getWeakConcept();if(weak){const p=BANK.filter(q=>q.concept===weak).sort((a,b)=>a.diff-b.diff);state={mode:'recommended',questions:uniquePick(p,Math.min(8,p.length)),idx:0,results:[],sessionCorrect:0,sessionStreak:0};markSeen(state.questions);save();openQuiz();}else startTraining();}
+function getWeakConcept(){let best=null,score=101;for(const q of BANK){const p=masteryPct(q.concept);if(mastery(q.concept).seen&&p<score){score=p;best=q.concept;}}return best;}
+
+// QUIZ
+function openQuiz(){showScreen('quiz');renderQuestion();}
+function renderQuestion(){
+ const q=state.questions[state.idx];
+ document.getElementById('modeTag').textContent=state.mode==='exam'?'🧪 Avaliação':state.mode==='daily'?'⚔️ Desafio':state.mode==='recommended'?'🩹 Recuperação':'🎮 Treinamento';
+ document.getElementById('qdiff').textContent=['','Básico','Intermediário','Avançado','Expert','Especialista'][q.diff];
+ document.getElementById('qcount').textContent=(state.idx+1)+'/'+state.questions.length;
+ document.getElementById('qtext').textContent=q.q;
+ document.getElementById('examBanner').innerHTML=state.mode==='exam'?'<div class="exam-box"><b>🧪 Avaliação de promoção</b><div class="small muted" style="margin-top:4px">Necessário: '+PROMOTION_SCORE+'% geral + mínimo '+REQUIRED_DOMAIN+'% nas competências obrigatórias.</div></div>':'';
+ const idxArr=[0,1,2,3].sort(()=>Math.random()-.5);const correct=idxArr.indexOf(q.ans);
+ const opts=document.getElementById('opts');opts.innerHTML='';
+ idxArr.forEach((orig,pos)=>{const b=document.createElement('button');b.className='opt';b.innerHTML='<span class="letter">'+['A','B','C','D'][pos]+'</span><span>'+esc(q.opts[orig])+'</span>';b.dataset.pos=pos;b.onclick=()=>answer(b,correct,pos,idxArr);opts.appendChild(b);});
+ document.getElementById('feedback').className='feedback';document.getElementById('nextBtn').style.display='none';
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+function answer(btn,correct,pos,idxArr){
+ document.querySelectorAll('.opt').forEach(b=>b.disabled=true);
+ const q=state.questions[state.idx];const ok=pos===correct;
+ document.querySelectorAll('.opt')[correct].classList.add('correct');
+ if(!ok)btn.classList.add('wrong');
+ const m=mastery(q.concept);m.seen++;
+ if(ok){m.correct++;state.sessionCorrect++;state.sessionStreak++;profile.totalCorrect++;}
+ else{state.sessionStreak=0;m.recovery=(m.recovery||0)+1;profile.recovered++;}
+ m.last=Date.now();profile.totalAnswered++;
+ state.results.push({q,ok,correctTxt:q.opts[idxArr[correct]],yourTxt:q.opts[idxArr[pos]]});
+ const mat=materialFor(q);
+ const fb=document.getElementById('feedback');fb.className='feedback show';
+ fb.innerHTML='<div class="fb '+(ok?'ok':'err')+'"><h4>'+(ok?'✅ Correto! +'+xpFor(q)+' XP':'❌ Não desta vez — revise o conceito')+'</h4><div class="small" style="line-height:1.6">'+esc(q.exp||'')+'</div><a class="material" href="'+mat.url+'" target="_blank" rel="noopener"><div class="play">▶</div><div><b>🎥 '+esc(mat.title)+'</b><small>Material: '+esc(q.concept)+'</small></div><div style="margin-left:auto;font-size:14px">↗</div></a>'+(ok?'':'<div class="small" style="margin-top:7px;color:var(--amber)">🩹 A próxima recuperação deste conceito será considerada no seu domínio.</div>')+'</div>';
+ if(ok)addXP(xpFor(q));else addXP(5);
+ if(state.sessionStreak>=5)unlock('streak5');if(masteryPct(q.concept)>=90)unlock('master90');if(!ok&&m.recovery>=10)unlock('recover10');
+ const nb=document.getElementById('nextBtn');nb.style.display='block';nb.textContent=state.idx<state.questions.length-1?'Próxima →':'Ver resultado →';
+ save();
+}
+function xpFor(q){return 10+q.diff*10+(state.mode==='exam'?5:0)+(state.mode==='daily'?5:0);}
+function addXP(x){profile.xp+=x;toast('+'+x+' XP');}
+function nextQuestion(){if(state.idx<state.questions.length-1){state.idx++;renderQuestion();}else finishSession();}
+async function finishSession(){
+ const total=state.questions.length,correct=state.sessionCorrect,p=Math.round(correct/total*100);
+ if(state.mode==='daily'){profile.daily={date:dayKey(),done:true,score:p};addXP(100);}
+ if(currentUser){try{await sb.insertSession({user_id:currentUser.id,mode:state.mode,score:p,correct,total,xp_earned:profile.xp});}catch(e){}}
+ if(state.mode==='exam'){
+  profile.promotionCount++;
+  const req=REQUIRED_BY_LEVEL[profile.level]||[];
+  const comp=req.map(g=>{const arr=state.results.filter(r=>catGroup(r.q.concept)===g);const pc=arr.length?Math.round(arr.filter(r=>r.ok).length/arr.length*100):0;return{g,pc};});
+  const passed=p>=PROMOTION_SCORE&&comp.every(x=>x.pc>=REQUIRED_DOMAIN);
+  if(passed&&profile.level<5){profile.level++;addXP(250);unlock('coach');}
+  showResult(p,comp,passed);
+ }else{
+  profile.trainingCount++;profile.history.unshift({date:new Date().toLocaleDateString('pt-BR'),mode:state.mode,score:p,correct,total,xp:profile.xp});profile.history=profile.history.slice(0,20);unlock('first');showResult(p,[],false);
+ }
+ save();
+}
+function showResult(p,comp,passed){
+ showScreen('result');
+ let title=state.mode==='exam'?(passed?'🎉 PROMOÇÃO CONQUISTADA!':'🧪 Avaliação concluída'):state.mode==='daily'?'⚔️ Desafio concluído':'📊 Treinamento concluído';
+ let html='<div class="hero"><h1>'+title+'</h1><p>'+state.sessionCorrect+'/'+state.questions.length+' acertos · '+p+'% · '+profile.xp+' XP total</p></div>';
+ if(state.mode==='exam'){if(passed)html+='<div class="promo"><h2>🔓 Novo nível desbloqueado!</h2><p style="margin-top:6px">'+esc(LEVELS[profile.level-1].label)+'</p></div>';else html+='<div class="card"><h3>❌ Promoção não liberada</h3><p class="muted small" style="margin-top:6px">Regra: '+PROMOTION_SCORE+'% geral e '+REQUIRED_DOMAIN+'% nas competências obrigatórias.</p></div>';}
+ html+='<div class="stats" style="margin-top:10px"><div class="stat"><b style="color:var(--green)">'+state.sessionCorrect+'</b><span>Acertos</span></div><div class="stat"><b style="color:var(--red)">'+(state.questions.length-state.sessionCorrect)+'</b><span>Erros</span></div><div class="stat"><b style="color:var(--accent)">'+profile.xp+'</b><span>XP total</span></div><div class="stat"><b style="color:var(--amber)">'+profile.level+'</b><span>Nível</span></div></div>';
+ if(comp.length){html+='<div class="section-title">Competências da avaliação</div><div class="card">'+comp.map(c=>'<div class="skill"><div class="skill-name">'+esc(c.g)+'</div><div class="bar"><i style="width:'+c.pc+'%;background:'+(c.pc>=REQUIRED_DOMAIN?'var(--green)':'var(--red)')+'"></i></div><div class="pct">'+c.pc+'%</div></div>').join('')+'</div>';}
+ const errors=state.results.filter(r=>!r.ok);
+ if(errors.length){html+='<div class="section-title">🩹 Revisão dos erros</div><div class="card">'+errors.map(r=>{const m=materialFor(r.q);return'<div class="review-item"><div class="review-q">'+esc(r.q.q)+'</div><div class="review-line righttxt">✓ Correto: '+esc(r.correctTxt)+'</div><div class="review-line wrongtxt">✗ Sua resposta: '+esc(r.yourTxt)+'</div><div class="review-line muted small" style="margin-top:3px">'+esc(r.q.exp||'')+'</div><a class="material" href="'+m.url+'" target="_blank" rel="noopener"><div class="play">▶</div><div><b>🎥 '+esc(m.title)+'</b><small>'+esc(r.q.concept)+'</small></div></a></div>';}).join('')+'</div>';}
+ html+='<div class="actions"><button class="btn" onclick="startRecommended()">🩹 Treinar meu ponto fraco</button><button class="btn secondary" onclick="showScreen(\'home\')">🏠 Voltar à jornada</button></div>';
+ document.getElementById('resultBody').innerHTML=html;
+}
+
+// SCREENS
+function showScreen(id){
+ document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===id));
+ document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+ const n=document.getElementById('nav-'+(id==='result'||id==='quiz'?'home':id));if(n)n.classList.add('active');
+ if(id==='home')renderHome();if(id==='study')renderStudy();if(id==='profile')renderProfile();
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+function renderAuthStrip(){
+ const w=document.getElementById('auth-strip-wrap');
+ if(!w)return;
+ if(currentUser){
+  w.innerHTML='<div class="auth-strip" onclick="showAuthMenu()"><div class="acloud">☁️</div><div class="atext"><b>'+esc(currentUser.email.split('@')[0])+'</b><span>'+esc(currentUser.email)+' · Progresso salvo na nuvem</span></div><div class="achev">›</div></div>';
+ }else{
+  w.innerHTML='<div class="auth-strip" onclick="showAuthModal()"><div class="acloud">🔐</div><div class="atext"><b>Entrar ou criar conta</b><span>Salve seu progresso na nuvem</span></div><div class="achev">›</div></div>';
+ }
+}
+function showAuthMenu(){
+ document.getElementById('modalBody').innerHTML='<h2 style="margin-bottom:4px;font-size:18px">☁️ Conta conectada</h2><p class="muted small" style="margin-bottom:16px">'+esc(currentUser.email)+'</p><div class="actions"><button class="btn secondary" onclick="doSignOut()">Sair da conta</button><button class="btn ghost" onclick="closeModal()">Cancelar</button></div>';
+ document.getElementById('modal').classList.add('show');
+}
+function renderHome(){
+ ensureDay();
+ document.getElementById('xp').textContent=profile.xp+' XP';
+ document.getElementById('welcome').textContent=LEVELS[profile.level-1].label;
+ const weak=getWeakConcept();
+ document.getElementById('homeMsg').textContent=weak?'Seu próximo ganho está em dominar '+weak+'.':'Continue acumulando prática e preparando a próxima promoção.';
+ document.getElementById('homeStats').innerHTML=[['🔥',profile.streak,'Streak'],['🎯',profile.totalAnswered,'Questões'],['✅',profile.totalAnswered?Math.round(profile.totalCorrect/profile.totalAnswered*100)+'%':'0%','Precisão'],['🏆',profile.level,'Nível']].map(x=>'<div class="stat"><b>'+x[1]+'</b><span>'+x[2]+'</span></div>').join('');
+ document.getElementById('missionText').textContent=weak?'Reforce '+weak+' com questões adaptativas.':'Faça um treinamento para começar a medir domínio.';
+ document.getElementById('recentAchievements').innerHTML=Object.keys(profile.achievements).slice(-3).reverse().map(k=>{const a=ACH.find(x=>x[0]===k);return a?'<div class="row"><span>'+a[1]+' '+a[2]+'</span><span class="muted">✅</span></div>':''}).join('')||'<div class="empty">Nenhuma conquista ainda.</div>';
+ renderSkills('homeSkills',10);updateLevels();renderAuthStrip();
+}
+function renderSkills(elId,limit){
+ const groups={};BANK.forEach(q=>{const g=catGroup(q.concept);groups[g]=groups[g]||new Set();groups[g].add(q.concept);});
+ const arr=[];Object.keys(groups).forEach(g=>{const p=Math.round([...groups[g]].map(c=>masteryPct(c)).reduce((a,b)=>a+b,0)/groups[g].size);arr.push([g,p]);});
+ arr.sort((a,b)=>b[1]-a[1]);
+ document.getElementById(elId).innerHTML=arr.slice(0,limit).map(x=>'<div class="skill"><div class="skill-name">'+esc(x[0])+'</div><div class="bar"><i style="width:'+x[1]+'%"></i></div><div class="pct">'+x[1]+'%</div></div>').join('');
+}
+function renderStudy(){
+ let html='';
+ TOPICS.forEach(([g,cs])=>{cs.forEach(c=>{const m=MATERIALS[c];const count=BANK.filter(q=>q.concept===c).length;if(!m)return;html+='<div class="study-card"><h3 style="font-size:13px">'+esc(c)+'</h3><div class="meta"><span class="chip">'+esc(g)+'</span><span class="chip">'+count+' perguntas</span><span class="chip">'+masteryPct(c)+'% domínio</span></div><div class="actions"><a class="btn secondary" href="'+esc(m[1])+'" target="_blank" rel="noopener" style="font-size:11px;padding:8px 10px">🎥 Vídeo</a><button class="btn" data-c="'+encodeURIComponent(c)+'" onclick="studyConcept(this.dataset.c)" style="font-size:11px;padding:8px 10px">🧠 Praticar</button></div></div>';});});
+ document.getElementById('studyGrid').innerHTML=html;
+}
+function studyConcept(enc){const c=decodeURIComponent(enc);const p=BANK.filter(q=>q.concept===c);state={mode:'recommended',questions:uniquePick(p,Math.min(8,p.length)),idx:0,results:[],sessionCorrect:0,sessionStreak:0};markSeen(state.questions);save();openQuiz();}
+function renderProfile(){
+ document.getElementById('profileStats').innerHTML=[['XP',profile.xp],['Precisão',profile.totalAnswered?Math.round(profile.totalCorrect/profile.totalAnswered*100)+'%':'0%'],['Streak máx.',profile.bestStreak],['Promoções',profile.level-1]].map(x=>'<div class="stat"><b>'+x[1]+'</b><span>'+x[0]+'</span></div>').join('');
+ document.getElementById('history').innerHTML=profile.history.length?profile.history.slice(0,12).map(h=>'<div class="row"><span>'+h.date+' · '+esc(h.mode)+'</span><span>'+h.correct+'/'+h.total+' · '+h.score+'%</span></div>').join(''):'<div class="empty">Seu histórico aparecerá aqui.</div>';
+ document.getElementById('achievements').innerHTML=ACH.map(a=>{const got=!!profile.achievements[a[0]];return'<div class="achievement '+(got?'':'lock')+'"><div class="aicon">'+a[1]+'</div><div><b>'+a[2]+'</b><div class="small muted">'+a[3]+'</div></div></div>';}).join('');
+ updateLevels();
+}
+function updateLevels(){
+ document.querySelectorAll('.lev').forEach(x=>x.classList.toggle('active',+x.dataset.lv===profile.level));
+ const pct=profile.level===5?100:((profile.level-1)/4*100)+5;
+ document.getElementById('levelFill').style.width=pct+'%';
+ document.getElementById('levelBadge').textContent=LEVELS[profile.level-1].label+(profile.level<5?' · próxima promoção: '+PROMOTION_SCORE+'%':' · nível máximo');
+ document.getElementById('levelBadge').style.color=LEVELS[profile.level-1].color;
+ document.getElementById('levelBadge').style.borderColor=LEVELS[profile.level-1].color;
+}
+function updateAll(){document.getElementById('xp').textContent=profile.xp+' XP';updateLevels();}
+function unlock(id){if(!profile.achievements[id]){profile.achievements[id]=Date.now();const a=ACH.find(x=>x[0]===id);if(a)toast('🏅 '+a[2]);}}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1600);}
+function closeModal(){document.getElementById('modal').classList.remove('show');}
+function resetProgress(){if(confirm('Zerar todo o progresso?')){if(currentUser)sb.upsertProfile({user_id:currentUser.id,level:1,xp:0,streak:0,best_streak:0,last_day:null,total_answered:0,total_correct:0,recovered:0,achievements:{},daily:{},training_count:0,promotion_count:0});profile=defaultProfile();save();showScreen('home');}}
+
+// AUTH MODAL
+function showAuthModal(){
+ document.getElementById('modalBody').innerHTML='<h2 style="margin-bottom:4px;font-size:18px">🔐 Entrar na Academia Agile</h2><p class="muted small" style="margin-bottom:16px">Seu progresso fica salvo na nuvem e acessível em qualquer dispositivo.</p><div style="display:flex;gap:8px;margin-bottom:16px"><button class="btn" id="btnL" onclick="setM(\'login\')">Entrar</button><button class="btn ghost" id="btnR" onclick="setM(\'register\')">Criar conta</button></div><div style="display:flex;flex-direction:column;gap:10px"><input id="aEmail" type="email" placeholder="seu@email.com" autocomplete="email" style="padding:10px 12px;border-radius:8px;border:1px solid var(--border2);background:var(--s2);color:var(--text);font-size:14px;font-family:var(--font)"><input id="aPass" type="password" placeholder="Senha (mínimo 6 caracteres)" autocomplete="current-password" style="padding:10px 12px;border-radius:8px;border:1px solid var(--border2);background:var(--s2);color:var(--text);font-size:14px;font-family:var(--font)"><div id="aErr" style="font-size:12px;color:var(--red);display:none;padding:8px 10px;background:rgba(255,110,123,.08);border-radius:7px"></div><button class="btn" id="aBtn" onclick="submitAuth()">Entrar</button></div><p class="small muted" style="margin-top:12px;line-height:1.6">Seu progresso local é preservado e sincronizado automaticamente após o login.</p>';
+ document.getElementById('modal').classList.add('show');
+ window._authMode='login';
+}
+function setM(m){window._authMode=m;document.getElementById('aBtn').textContent=m==='login'?'Entrar':'Criar conta';document.getElementById('btnL').className=m==='login'?'btn':'btn ghost';document.getElementById('btnR').className=m==='register'?'btn':'btn ghost';}
+async function submitAuth(){
+ const email=document.getElementById('aEmail').value.trim();
+ const pass=document.getElementById('aPass').value;
+ const err=document.getElementById('aErr');
+ const btn=document.getElementById('aBtn');
+ if(!email||!pass){err.textContent='Preencha email e senha.';err.style.display='block';return;}
+ if(pass.length<6){err.textContent='A senha deve ter pelo menos 6 caracteres.';err.style.display='block';return;}
+ btn.textContent='Aguarde...';btn.disabled=true;err.style.display='none';
+ try{
+  let res;
+  if(window._authMode==='login'){
+   res=await sb.signIn(email,pass);
+   if(res.error){
+    const msg=res.error.message;
+    err.textContent=msg.includes('Invalid')||msg.includes('credentials')?'Email ou senha incorretos. Verifique e tente novamente.':msg.includes('Email not confirmed')?'Confirme seu email antes de entrar. Verifique sua caixa de entrada.':msg;
+    err.style.display='block';btn.textContent='Entrar';btn.disabled=false;return;
+   }
+   currentUser=res.data.user;localStorage.setItem('supa_user',JSON.stringify(currentUser));
+   const loaded=await loadFromCloud();if(!loaded)await syncToCloud();
+  }else{
+   res=await sb.signUp(email,pass);
+   if(res.error){err.textContent=res.error.message.includes('already')?'Este email já tem conta. Tente entrar em vez de criar conta.':res.error.message;err.style.display='block';btn.textContent='Criar conta';btn.disabled=false;return;}
+   currentUser=res.data.user;
+   if(currentUser){localStorage.setItem('supa_user',JSON.stringify(currentUser));await syncToCloud();}
+  }
+  closeModal();toast('✅ Bem-vindo, '+email.split('@')[0]+'!');
+  renderHome();renderProfile();updateAll();
+ }catch(e){
+  console.error('auth error',e);
+  err.textContent='Erro de conexão com o servidor. Verifique sua internet e tente novamente.';
+  err.style.display='block';btn.textContent=window._authMode==='login'?'Entrar':'Criar conta';btn.disabled=false;
+ }
+}
+async function doSignOut(){
+ closeModal();
+ await sb.signOut();currentUser=null;localStorage.removeItem('supa_user');localStorage.removeItem('supa_token');
+ profile=defaultProfile();
+ try{const l=localStorage.getItem('agile-academy-v3');if(l)Object.assign(profile,JSON.parse(l));}catch(e){}
+ renderHome();renderProfile();updateAll();toast('Sessão encerrada.');
+}
+
+// BOOT
+(async function boot(){
+ try{
+  if('scrollRestoration' in history)history.scrollRestoration='manual';
+  // Carrega progresso local primeiro
+  try{const l=localStorage.getItem('agile-academy-v3');if(l)Object.assign(profile,JSON.parse(l));}catch(e){}
+  showScreen('home');ensureDay();renderHome();renderStudy();renderProfile();updateAll();
+  window.scrollTo(0,0);requestAnimationFrame(()=>{window.scrollTo(0,0);setTimeout(()=>window.scrollTo(0,0),80);});
+  // Verifica sessão Supabase em background
+  await loadAuth();
+  if(currentUser){
+   const ok=await loadFromCloud();
+   if(ok){renderHome();renderProfile();updateAll();}
+  }
+ }catch(e){console.error('BOOT_ERROR',e);}
+})();
+</script></body></html>
