@@ -141,7 +141,6 @@ button,a{font:inherit}
   .main{padding:12px 11px 80px}
 }
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 </head>
 <body>
 <div class="toast" id="toast"></div>
@@ -236,45 +235,88 @@ button,a{font:inherit}
   <div class="modal-card"><button class="x" onclick="closeModal()">&#215;</button><div id="modalBody"></div></div>
 </div>
 <script>
-// ══ SUPABASE CONFIG — usando SDK oficial (resolve CORS) ══
+// ══ SUPABASE CONFIG v3 — fetch direto compatível com novo formato de chave ══
 const SUPA_URL='https://zkavsisuylbafumxsgus.supabase.com';
 const SUPA_KEY='sb_publishable_JR3wXcyk6e029XUL18Q2AA_QOh7_qcf';
 
-// Aguarda o SDK carregar
-let _supa=null;
-function getClient(){
- if(!_supa&&window.supabase){
-  _supa=window.supabase.createClient(SUPA_URL,SUPA_KEY,{
-   auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}
-  });
- }
- return _supa;
+// Descobre o token de sessão salvo
+function getToken(){return localStorage.getItem('sb-token')||SUPA_KEY;}
+
+// Headers base
+function hdr(token){
+ return {'apikey':SUPA_KEY,'Authorization':'Bearer '+(token||SUPA_KEY),'Content-Type':'application/json'};
 }
 
 const sb={
- client(){return getClient();},
- async signUp(email,pass){return this.client().auth.signUp({email,password:pass});},
- async signIn(email,pass){return this.client().auth.signInWithPassword({email,password:pass});},
- async signOut(){return this.client().auth.signOut();},
- async getSession(){return this.client().auth.getSession();},
- async upsertProfile(data){return this.client().from('profiles').upsert(data,{onConflict:'user_id'});},
- async upsertMastery(rows){return this.client().from('mastery').upsert(rows,{onConflict:'user_id,concept'});},
- async insertSession(data){return this.client().from('sessions').insert(data);},
- async getProfile(uid){const{data}=await this.client().from('profiles').select('*').eq('user_id',uid).single();return data||null;},
- async getMastery(uid){const{data}=await this.client().from('mastery').select('*').eq('user_id',uid);return data||[];}
+ async signUp(email,pass){
+  const r=await fetch(SUPA_URL+'/auth/v1/signup',{
+   method:'POST',headers:hdr(SUPA_KEY),
+   body:JSON.stringify({email,password:pass,options:{emailRedirectTo:'https://caae.netlify.app'}})
+  });
+  return r.json();
+ },
+ async signIn(email,pass){
+  const r=await fetch(SUPA_URL+'/auth/v1/token?grant_type=password',{
+   method:'POST',headers:hdr(SUPA_KEY),
+   body:JSON.stringify({email,password:pass})
+  });
+  const d=await r.json();
+  if(d.access_token){localStorage.setItem('sb-token',d.access_token);localStorage.setItem('sb-refresh',d.refresh_token||'');}
+  return d;
+ },
+ async signOut(){
+  try{await fetch(SUPA_URL+'/auth/v1/logout',{method:'POST',headers:hdr(getToken())});}catch(e){}
+  localStorage.removeItem('sb-token');localStorage.removeItem('sb-refresh');localStorage.removeItem('supa_user');
+ },
+ async refreshSession(){
+  const rt=localStorage.getItem('sb-refresh');if(!rt)return null;
+  try{
+   const r=await fetch(SUPA_URL+'/auth/v1/token?grant_type=refresh_token',{
+    method:'POST',headers:hdr(SUPA_KEY),body:JSON.stringify({refresh_token:rt})
+   });
+   const d=await r.json();
+   if(d.access_token){localStorage.setItem('sb-token',d.access_token);if(d.refresh_token)localStorage.setItem('sb-refresh',d.refresh_token);return d;}
+  }catch(e){}
+  return null;
+ },
+ async getUser(){
+  const r=await fetch(SUPA_URL+'/auth/v1/user',{headers:hdr(getToken())});
+  const d=await r.json();return d.id?d:null;
+ },
+ async db(method,table,body,extra){
+  const r=await fetch(SUPA_URL+'/rest/v1/'+table+(extra||''),{
+   method,headers:{...hdr(getToken()),'Prefer':method==='POST'?'resolution=merge-duplicates':''},
+   body:body?JSON.stringify(body):undefined
+  });
+  if(!r.ok)return null;
+  const txt=await r.text();try{return txt?JSON.parse(txt):null;}catch(e){return null;}
+ },
+ async upsertProfile(d){return this.db('POST','profiles',d,'?on_conflict=user_id');},
+ async upsertMastery(rows){return this.db('POST','mastery',rows,'?on_conflict=user_id,concept');},
+ async insertSession(d){return this.db('POST','sessions',d,'');},
+ async getProfile(uid){const d=await this.db('GET','profiles',null,'?user_id=eq.'+uid+'&limit=1');return Array.isArray(d)&&d.length?d[0]:null;},
+ async getMastery(uid){const d=await this.db('GET','mastery',null,'?user_id=eq.'+uid);return Array.isArray(d)?d:[];}
 };
 
 let currentUser=null;
 async function loadAuth(){
- try{
-  const c=getClient();
-  if(!c)return;
-  const{data:{session}}=await c.auth.getSession();
-  if(session){currentUser=session.user;localStorage.setItem('supa_user',JSON.stringify(session.user));}
- }catch(e){
-  // Fallback: tenta localStorage
-  try{const u=localStorage.getItem('supa_user');if(u)currentUser=JSON.parse(u);}catch(e2){}
+ // Tenta usar token salvo
+ const token=localStorage.getItem('sb-token');
+ if(!token){
+  // Tenta restaurar do usuário salvo
+  try{const u=localStorage.getItem('supa_user');if(u)currentUser=JSON.parse(u);}catch(e){}
+  return;
  }
+ try{
+  const u=await sb.getUser();
+  if(u&&u.id){currentUser=u;localStorage.setItem('supa_user',JSON.stringify(u));}
+  else{
+   // Token expirado — tenta refresh
+   const refreshed=await sb.refreshSession();
+   if(refreshed){const u2=await sb.getUser();if(u2&&u2.id){currentUser=u2;localStorage.setItem('supa_user',JSON.stringify(u2));}}
+   else{localStorage.removeItem('sb-token');localStorage.removeItem('supa_user');}
+  }
+ }catch(e){try{const u=localStorage.getItem('supa_user');if(u)currentUser=JSON.parse(u);}catch(e2){}}
 }
 // ══ BANCO DE QUESTÕES ══
 const BANK_RAW=[
@@ -559,12 +601,12 @@ async function submitAuth(){
     err.textContent=msg.includes('Invalid')||msg.includes('credentials')?'Email ou senha incorretos. Verifique e tente novamente.':msg.includes('Email not confirmed')?'Confirme seu email antes de entrar. Verifique sua caixa de entrada.':msg;
     err.style.display='block';btn.textContent='Entrar';btn.disabled=false;return;
    }
-   currentUser=res.data.user;localStorage.setItem('supa_user',JSON.stringify(currentUser));
+   currentUser=res.user;localStorage.setItem('supa_user',JSON.stringify(currentUser));
    const loaded=await loadFromCloud();if(!loaded)await syncToCloud();
   }else{
    res=await sb.signUp(email,pass);
    if(res.error){err.textContent=res.error.message.includes('already')?'Este email já tem conta. Tente entrar em vez de criar conta.':res.error.message;err.style.display='block';btn.textContent='Criar conta';btn.disabled=false;return;}
-   currentUser=res.data.user;
+   currentUser=res.user;
    if(currentUser){localStorage.setItem('supa_user',JSON.stringify(currentUser));await syncToCloud();}
   }
   closeModal();toast('✅ Bem-vindo, '+email.split('@')[0]+'!');
