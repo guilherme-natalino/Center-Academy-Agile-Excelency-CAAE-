@@ -1,0 +1,54 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const root = path.resolve(__dirname, '..');
+const security = fs.readFileSync(path.join(root, 'js/security.js'), 'utf8');
+const model = fs.readFileSync(path.join(root, 'js/model.js'), 'utf8');
+const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+
+function test(name, fn) {
+  try { fn(); console.log(`ok - ${name}`); }
+  catch (error) { console.error(`not ok - ${name}`); throw error; }
+}
+
+test('OWASP Top 10:2025 baseline is documented in code', () => {
+  for (const id of ['A01','A02','A03','A04','A05','A06','A07','A08','A09','A10']) {
+    assert.match(security, new RegExp(id + ':2025'));
+  }
+});
+
+test('Security helpers validate UUIDs, URLs and bounded integers', () => {
+  assert.match(security, /function safeUuid/);
+  assert.match(security, /function safeExternalUrl/);
+  assert.match(security, /function clampInt/);
+  assert.match(security, /Math\.min/);
+});
+
+test('Supabase table access is allowlisted', () => {
+  assert.match(security, /SUPABASE_TABLES/);
+  assert.match(model, /Security\.allowListValue\(table, Security\.SUPABASE_TABLES\)/);
+});
+
+test('CSP and security headers are defined for static hosting', () => {
+  assert.match(html, /security\.js/);
+  const headers = fs.readFileSync(path.join(root, '_headers'), 'utf8');
+  assert.match(headers, /Content-Security-Policy/);
+  assert.match(headers, /X-Content-Type-Options: nosniff/);
+  assert.match(headers, /Referrer-Policy/);
+  assert.match(headers, /Permissions-Policy/);
+});
+
+test('Journey uses five explicit mascot states and does not trust arbitrary profile level', () => {
+  assert.match(fs.readFileSync(path.join(root, 'js/view.js'), 'utf8'), /function getMascotState/);
+  assert.match(model, /normalizeProfile/);
+  assert.match(fs.readFileSync(path.join(root, 'js/security.js'), 'utf8'), /level: clampInt/);
+  assert.match(html, /journeyTrack/);
+});
+
+
+test('No stale Jornada progress elements or inline event handlers remain', () => {
+  assert.doesNotMatch(model, /levelFill|levelBadge/);
+  assert.doesNotMatch(html, /onclick\s*=/i);
+  assert.doesNotMatch(fs.readFileSync(path.join(root, 'js/view.js'), 'utf8'), /onclick\s*=/i);
+  assert.doesNotMatch(fs.readFileSync(path.join(root, 'js/controller.js'), 'utf8'), /onclick\s*=/i);
+});

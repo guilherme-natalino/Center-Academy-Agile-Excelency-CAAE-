@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="apple-touch-icon" href="assets/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="theme-color" content="#0b1020">
+  <title>Academia Agile</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <header class="top" id="topBar">
+    <div class="toprow">
+      <div class="logo" aria-hidden="true"><img src="assets/favicon.png" alt=""></div>
+      <div class="brand">
+        <b>Academia Agile</b>
+        <span>Sua jornada para a excelência</span>
+      </div>
+      <div class="top-spacer"></div>
+      <div class="top-stat"><span>🔥</span><b id="streakTop">0 dias</b><small>Streak atual</small></div>
+      <div class="top-stat"><span>⭐</span><b id="xp">0 XP</b><small>XP total</small></div>
+      <button class="icon-btn" type="button" aria-label="Notificações" title="Notificações">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>
+      </button>
+      <button class="avatar-btn" id="accountBtn" type="button" data-action="auth-menu" aria-label="Abrir conta">
+        <span id="avatarInitials">GM</span><span>⌄</span>
+      </button>
+    </div>
+
+    <nav class="nav" aria-label="Navegação principal">
+      <button id="nav-home" class="active" type="button" data-screen="home">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12L12 3l9 9"/><path d="M5 10v9a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-9"/></svg>
+        <span>Jornada</span>
+      </button>
+      <button id="nav-study" type="button" data-screen="study">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="15" y2="11"/></svg>
+        <span>Estudos</span>
+      </button>
+      <button id="nav-metrics" type="button" data-screen="metrics">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <span>Métricas</span>
+      </button>
+      <button id="nav-profile" type="button" data-screen="profile">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>Perfil</span>
+      </button>
+    </nav>
+  </header>
+
+  <main class="main">
+    <section class="screen active" id="home">
+      <div id="auth-strip-wrap"></div>
+
+      <div class="home-level-grid">
+        <div class="card level-card level-card--journey-only">
+          <div class="eyebrow">SUA JORNADA</div>
+          <div class="journey-track" id="journeyTrack"></div>
+        </div>
+
+        <div class="card goal-card">
+          <div class="eyebrow">PRÓXIMA META</div>
+          <h2 id="nextGoal">Scrum Master Pleno</h2>
+          <p id="goalText">75% dos requisitos concluídos</p>
+          <div class="bar"><i id="goalBar"></i></div>
+          <small id="goalHint">Avaliação + domínio mínimo</small>
+          <button class="btn secondary goal-btn" type="button" data-action="exam">Ver avaliação →</button>
+        </div>
+      </div>
+
+
+
+      <div class="home-action-grid">
+        <div class="card continue-card">
+          <div class="continue-top"><span>CONTINUE DE ONDE PAROU</span><b>+ XP por questão</b></div>
+          <div class="continue-content">
+            <div class="target-icon">◉</div>
+            <div class="continue-info">
+              <h2>Continue seu treinamento</h2>
+              <p><b id="continueConcept">Treinamento adaptativo</b> · Intermediário</p>
+              <p id="continueQuestion">Questões adaptativas ao seu nível</p>
+              <div class="progress-line"><i id="continueBar"></i></div>
+            </div>
+            <strong id="continuePct">Pronto</strong>
+          </div>
+          <button class="primary-action" type="button" data-action="training">▶ &nbsp; Continuar agora</button>
+        </div>
+
+        <div class="card daily-card">
+          <div class="card-label">⚔ DESAFIO DIÁRIO</div>
+          <h3>Complete seu desafio de hoje</h3>
+          <p id="dailyCount">0 de 5 questões</p>
+          <small>Bônus: +150 XP</small>
+          <div class="mini-progress"><i id="dailyBar"></i></div>
+          <button class="green-action" type="button" data-action="daily">Continuar desafio →</button>
+        </div>
+
+        <div class="card recommended-card">
+          <div class="card-label">🧠 FOCO RECOMENDADO</div>
+          <h3 id="recommendedConcept">Seu ponto de atenção</h3>
+          <p>Seu domínio atual</p>
+          <strong id="recommendedPct">0%</strong>
+          <div class="mini-progress"><i id="recommendedBar"></i></div>
+          <button class="purple-action" type="button" data-action="recommended">Treinar agora →</button>
+        </div>
+      </div>
+
+      <section class="journey-explainer">
+        <h2>Como funciona sua jornada</h2>
+        <div class="explainer-grid">
+          <div><span>🗺️</span><div><b>Siga o caminho</b><p>Complete os conceitos na ordem certa e evolua sua carreira.</p></div></div>
+          <div><span>🎯</span><div><b>Treine e aprenda</b><p>Questões adaptativas que se ajustam ao seu nível.</p></div></div>
+          <div><span>🏆</span><div><b>Ganhe XP</b><p>Acumule experiência ao acertar questões e concluir desafios.</p></div></div>
+          <div><span>🔥</span><div><b>Mantenha o streak</b><p>Estude todos os dias para manter sua sequência.</p></div></div>
+          <div><span>👑</span><div><b>Seja promovido</b><p>Alinhe os requisitos e conquiste novas posições.</p></div></div>
+        </div>
+        <div class="sync-strip">
+          <span>🛡️</span>
+          <span>Seus dados estão seguros e sincronizados na nuvem</span>
+          <small id="syncStatus">Acesse de qualquer dispositivo e continue de onde parou.</small>
+          <b>☁ Sincronizado agora ✓</b>
+        </div>
+      </section>
+    </section>
+
+    <section class="screen" id="study">
+      <div class="hero"><h1>📚 Estudos</h1><p>Vídeos e perguntas organizados por conceito. Cada material corresponde ao tópico.</p></div>
+      <div class="study-grid" id="studyGrid"></div>
+    </section>
+
+    <section class="screen" id="metrics">
+      <div class="hero"><h1>📊 Métricas</h1><p>Acompanhe seu domínio, desempenho e pontos de atenção sem poluir sua jornada.</p></div>
+      <div class="metrics-overview" id="metricsOverview"></div>
+      <div class="section-title">Domínio por competência</div>
+      <div class="card" id="metricsSkills"></div>
+      <div class="section-title">Pontos de atenção</div>
+      <div class="card" id="metricsFocus"></div>
+    </section>
+
+    <section class="screen" id="profile">
+      <div class="hero"><h1>👤 Seu perfil</h1><p>Histórico, conquistas e próximos passos.</p></div>
+      <div class="stats" id="profileStats"></div>
+      <div class="section-title">Evolução</div>
+      <div class="card" id="history"></div>
+      <div class="section-title">Conquistas</div>
+      <div class="grid" id="achievements"></div>
+      <div class="actions profile-actions"><button class="btn ghost" type="button" data-action="reset">↻ Zerar progresso</button></div>
+    </section>
+
+    <section class="screen" id="quiz">
+      <div id="examBanner"></div>
+      <div class="qtop">
+        <span class="tag" id="modeTag">🎮 Treinamento</span>
+        <span class="tag" id="qdiff">Básico</span>
+        <span class="qcount" id="qcount">1/12</span>
+      </div>
+      <div class="qcard"><div class="qtext" id="qtext"></div><div class="opts" id="opts"></div></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="btn next" id="nextBtn" type="button" data-action="next">Próxima →</button>
+    </section>
+
+    <section class="screen" id="result"><div id="resultBody"></div></section>
+  </main>
+
+  <div class="modal" id="modal" aria-hidden="true">
+    <div class="modal-card">
+      <button class="x" type="button" data-action="close-modal" aria-label="Fechar">×</button>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <script src="js/security.js"></script>
+  <script src="js/model.js"></script>
+  <script src="js/view.js"></script>
+  <script src="js/controller.js"></script>
+</body>
+</html>
